@@ -1,4 +1,4 @@
-package com.zxh.Controller;
+package com.zxh.controller;
 
 import com.zxh.exception.MyException;
 import org.springframework.stereotype.Controller;
