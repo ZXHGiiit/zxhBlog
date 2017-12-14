@@ -21,7 +21,7 @@ public class LogAspect {
     private static final Logger logger = LoggerFactory.getLogger(LogAspect.class);
 
     /**
-     * 定义切点
+     * 定义切面
      */
     @Pointcut("execution(* com.zxh.controller.*.*(..))")
     public void log() {

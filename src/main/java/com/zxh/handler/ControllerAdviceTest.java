@@ -37,11 +37,14 @@ public class ControllerAdviceTest {
     @ExceptionHandler(MyException.class)
     //@ResponseStatus(HttpStatus.NOT_FOUND)
     public ModelAndView processException(HttpServletRequest request, MyException e) {
-          logger.error("=============出了异常=============");
-          logger.error("errorURL:{}, exceptionMsg:{}", request.getRequestURL(),e);
-          ModelAndView mv = new ModelAndView();
-          mv.setViewName("/error/error");
-          return mv;
+
+        logger.error("=============出了异常=============");
+        logger.error("errorURL:{}, exceptionMsg:{}", request.getRequestURL(),e);
+        ModelAndView mv = new ModelAndView();
+        mv.addObject("url",request.getRequestURL());
+        mv.addObject("exception", e);
+        mv.setViewName("error/error");
+        return mv;
     }
 
 
