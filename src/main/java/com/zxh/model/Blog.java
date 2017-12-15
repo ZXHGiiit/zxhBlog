@@ -1,7 +1,9 @@
 package com.zxh.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by admin on 2017/12/14.
@@ -27,6 +29,16 @@ public class Blog {
     private Date createTime;
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime;
+
+    //@OneToMany(mappedBy = "blog")
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    private List<Tag> tags = new ArrayList<>();
+    @OneToMany(mappedBy = "blog")
+    private List<Comment> comments = new ArrayList<>();
+    @ManyToOne
+    private Type type;
+    @ManyToOne
+    private User user;
 
     public Long getId() {
         return id;
@@ -130,5 +142,37 @@ public class Blog {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
