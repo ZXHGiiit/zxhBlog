@@ -19,13 +19,13 @@ public class ControllerAdviceTest {
 
     @ModelAttribute
     public User newUser() {
-        System.out.println("应用到所有的@RequestMapping 注解方法中，在其执行之前，将返回值放入model");
+        //System.out.println("应用到所有的@RequestMapping 注解方法中，在其执行之前，将返回值放入model");
         return new User();
     }
 
     @InitBinder
     public void initBinder() {
-        System.out.println("应用到所有的@RequestMapping注解方法中，在其执行之前，初始化数据绑定器");
+        //System.out.println("应用到所有的@RequestMapping注解方法中，在其执行之前，初始化数据绑定器");
     }
 
 
