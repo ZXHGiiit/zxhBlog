@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * Created by admin on 2017/12/15.
  */
@@ -62,5 +64,10 @@ public class TypeServiceImpl implements TypeService {
         }
         BeanUtils.copyProperties(type,t);
         return typeRespository.save(t);
+    }
+
+    @Override
+    public List<Type> listType() {
+        return typeRespository.findAll();
     }
 }

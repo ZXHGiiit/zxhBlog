@@ -18,10 +18,10 @@ public class Blog {
     private String title;
     private String content;
     private String firstPic;
-    private String flag;
+    private String flag;//原创，转载，翻译
     private Integer views;
     private boolean appreciation;//赞赏是否开启
-    private boolean share;//分享是否开启
+    private boolean shareStatement;//分享是否开启
     private boolean commentabled;//评论是否开启
     private boolean published;//
     private boolean recommend;
@@ -39,6 +39,26 @@ public class Blog {
     private Type type;
     @ManyToOne
     private User user;
+    @Transient
+    private String tagIds;
+    private String description;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getTagIds() {
+
+        return tagIds;
+    }
+
+    public void setTagIds(String tagIds) {
+        this.tagIds = tagIds;
+    }
 
     public Long getId() {
         return id;
@@ -96,12 +116,12 @@ public class Blog {
         this.appreciation = appreciation;
     }
 
-    public boolean isShare() {
-        return share;
+    public boolean isShareStatement() {
+        return shareStatement;
     }
 
-    public void setShare(boolean share) {
-        this.share = share;
+    public void setShareStatement(boolean shareStatement) {
+        this.shareStatement = shareStatement;
     }
 
     public boolean isCommentabled() {
