@@ -37,7 +37,7 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public Blog getBlog(Long id) {
-        return blogRespository.findOne(id);
+        return blogRespository.findByIdAndDeleteFlag(id, false);
     }
 
     @Override
@@ -55,6 +55,7 @@ public class BlogServiceImpl implements BlogService {
                 if (blog.isRecommend()) {
                     predicates.add(cb.equal(root.<Boolean>get("recommend"), blog.isRecommend()));
                 }
+                predicates.add(cb.equal(root.<Boolean>get("deleteFlag"), false));
                 cq.where(predicates.toArray(new Predicate[predicates.size()]));
                 return null;
             }
@@ -94,7 +95,12 @@ public class BlogServiceImpl implements BlogService {
     @Transactional
     @Override
     public void deleteBlog(Long id) {
-        blogRespository.delete(id);
+        Blog blog = blogRespository.findOne(id);
+        if(blog == null) {
+            logger.error("BlogServiceImpl.deleteBlog.ERROR.blog is not exist. id: {}", id);
+        }
+        blog.setDeleteFlag(true);
+        blogRespository.save(blog);
     }
 
     @Override

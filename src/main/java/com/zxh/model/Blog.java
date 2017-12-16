@@ -26,8 +26,10 @@ public class Blog {
     private boolean appreciation;//赞赏是否开启
     private boolean shareStatement;//分享是否开启
     private boolean commentabled;//评论是否开启
-    private boolean published;//
-    private boolean recommend;
+    private boolean published;//是否发布，
+    private boolean recommend;//是否推荐
+    private boolean deleteFlag;//是否删除
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
     @Temporal(TemporalType.TIMESTAMP)
@@ -72,25 +74,13 @@ public class Blog {
     }
 
 
+    public boolean isDeleteFlag() {
+        return deleteFlag;
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public void setDeleteFlag(boolean deleteFlag) {
+        this.deleteFlag = deleteFlag;
+    }
 
     public String getDescription() {
         return description;

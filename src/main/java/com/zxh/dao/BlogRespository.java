@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  * 继承JpaSpecificationExecutor，来实现复杂的多条件分页查询
  */
 public interface BlogRespository extends JpaRepository<Blog, Long>, JpaSpecificationExecutor<Blog> {
-
+    Blog findByIdAndDeleteFlag(Long id, boolean deleteFlag);
 }
