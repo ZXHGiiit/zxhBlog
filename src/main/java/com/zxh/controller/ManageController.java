@@ -22,9 +22,11 @@ public class ManageController {
         return page;
     }
 
+    /*
     @RequestMapping("/admin/{page}")
     public String showAdminPage(@PathVariable String page) {
         return "/admin/" + page;
     }
+    */
 
 }

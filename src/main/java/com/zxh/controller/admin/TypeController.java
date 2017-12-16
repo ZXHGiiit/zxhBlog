@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.jws.Oneway;
-import javax.jws.WebParam;
 import javax.validation.Valid;
 
 /**
@@ -41,6 +39,7 @@ public class TypeController {
      */
     @GetMapping("/types/input")
     public String showInputPage(Model model) {
+        //修改页需要tag作为参数，防止空指针异常，这里传入一个空的tag对象
         model.addAttribute("type", new Type());
         return "/admin/types-input";
     }
@@ -52,7 +51,11 @@ public class TypeController {
      * @return
      */
     @GetMapping("/types/{id}/input")
-    public String editInput(@PathVariable Long id, Model model) {
+    public String showEditPage(@PathVariable Long id, Model model) {
+        Type type = typeService.getType(id);
+        if(type == null) {
+            logger.error("TypeController.showEditPage.Type is not exist. id: {}", id);
+        }
         model.addAttribute("type", typeService.getType(id));
         return "/admin/types-input";
     }
