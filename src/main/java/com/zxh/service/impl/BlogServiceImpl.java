@@ -81,7 +81,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public Blog updateBlog(Long id, Blog blog) {
         Blog blog1 = blogRespository.findOne(id);
-        if(blog1 != null) {
+        if(blog1 == null) {
             logger.error("BlogServiceImpl.updateBlog.ERROR.不存在此id的blog, id: {}", id);
             throw new NotFoundException("该博客不存在");
         }

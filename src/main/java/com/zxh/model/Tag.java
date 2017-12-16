@@ -1,5 +1,7 @@
 package com.zxh.model;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,7 @@ public class Tag {
     @Id
     @GeneratedValue
     private Long id;
+    @NotBlank(message = "标签名称不能为空")
     private String name;
 
     @ManyToMany(mappedBy = "tags")
@@ -41,5 +44,14 @@ public class Tag {
 
     public void setBlogs(List<Blog> blogs) {
         this.blogs = blogs;
+    }
+
+    @Override
+    public String toString() {
+        return "Tag{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", blogs=" + blogs +
+                '}';
     }
 }

@@ -3,6 +3,7 @@ package com.zxh.controller.admin;
 import com.zxh.dao.BlogRespository;
 import com.zxh.dao.TypeRespository;
 import com.zxh.model.Blog;
+import com.zxh.model.User;
 import com.zxh.service.BlogService;
 import com.zxh.service.TagService;
 import com.zxh.service.TypeService;
@@ -17,7 +18,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpSession;
 
 
 /**
@@ -81,5 +86,43 @@ public class BlogController {
         model.addAttribute("blog", blog);
         setTypeAndTag(model);
         return "/admin/blogs-input";
+    }
+
+
+    /**
+     * 添加/修改博客
+     * @param blog
+     * @param attributes
+     * @param session
+     * @return
+     */
+    @PostMapping("/blogs")
+    public String post(Blog blog, RedirectAttributes attributes, HttpSession session) {
+        logger.info("BlogController.post.info: {}", blog);
+        User user = (User) session.getAttribute("user");
+        if(user == null) {
+            attributes.addFlashAttribute("message", "操作失败，未知用户");
+        }
+        blog.setUser(user);
+        //前端保存的是其id，需要将整个对象存入blog中
+        blog.setType(typeService.getType(blog.getType().getId()));
+        blog.setTags(tagService.listTag(blog.getTagIds()));
+
+        Blog b;
+        if(blog.getId() == null) {
+            //新增博客
+            b = blogService.saveBlog(blog);
+        } else {
+            //若id存在，表示修改已存在的博客
+            b = blogService.updateBlog(blog.getId(), blog);
+        }
+
+        if(b == null) {
+            logger.error("BlogController.post.ERROR");
+            attributes.addFlashAttribute("message", "操作失败");
+        } else {
+            attributes.addFlashAttribute("message", "操作失败");
+        }
+        return "redirect:/admin/blogs";
     }
 }
