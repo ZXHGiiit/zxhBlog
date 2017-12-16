@@ -126,6 +126,18 @@ public class BlogController {
         return "redirect:/admin/blogs";
     }
 
+
+    @GetMapping("/blogs/{id}/delete")
+    public String delete(@PathVariable Long id, RedirectAttributes attributes) {
+        blogService.deleteBlog(id);
+        attributes.addFlashAttribute("message", "操作成功");
+        return "redirect:/admin/blogs";
+    }
+
+
+
+
+
     @RequestMapping("/test")
     @ResponseBody
     public String test() {
