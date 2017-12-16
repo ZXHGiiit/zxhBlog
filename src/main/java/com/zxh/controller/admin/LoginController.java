@@ -1,4 +1,4 @@
-package com.zxh.controller;
+package com.zxh.controller.admin;
 
 import com.zxh.model.User;
 import com.zxh.service.UserService;
