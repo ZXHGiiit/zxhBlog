@@ -1,5 +1,8 @@
 package com.zxh.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,6 +45,52 @@ public class Blog {
     @Transient
     private String tagIds;
     private String description;
+
+    /**
+     * 由于属性tagIds是不在数据库里面的
+     * 需要初始化将tags转换为tagids
+     */
+    public void init() {
+        tagIds = tagsToIds(tags);
+    }
+
+    private String tagsToIds(List<Tag> tags) {
+        if(tags == null || tags.size() == 0) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        boolean flag = false;
+        for(Tag tag : tags) {
+            if(flag) {
+                sb.append(",");
+            } else {
+                flag = true;
+            }
+            sb.append(tag.getId());
+        }
+        return sb.toString();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public String getDescription() {
         return description;
@@ -213,7 +262,7 @@ public class Blog {
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 ", comments=" + comments +
-                ", user=" + user +
+                ", userId=" + user.getId() +
                 ", tagIds='" + tagIds + '\'' +
                 ", description='" + description + '\'' +
                 '}';

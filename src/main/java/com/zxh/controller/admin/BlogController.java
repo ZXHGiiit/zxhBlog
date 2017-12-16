@@ -81,6 +81,7 @@ public class BlogController {
     @GetMapping("/blogs/{id}/input")
     public String showEditPage(@PathVariable Long id, Model model) {
         Blog blog = blogService.getBlog(id);
+        blog.init();
         logger.info("BlogController.showEditPage.info: {}", blog.toString());
         model.addAttribute("blog", blog);
         setTypeAndTag(model);

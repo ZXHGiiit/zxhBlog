@@ -62,7 +62,6 @@
             <th>推荐</th>
             <th>状态</th>
             <th>更新时间</th>
-            <th>标签Id</th>
             <th>操作</th>
           </tr>
         </thead>
@@ -74,7 +73,6 @@
             <td th:text="${blog.recommend} ? '是':'否'">是</td>
             <td th:text="${blog.published} ? '发布':'草稿'">草稿</td>
             <td th:text="${blog.updateTime}">2017-10-02 09:45</td>
-            <td th:text="${blog.tags}"></td>
             <td>
               <a href="#" th:href="@{/admin/blogs/{id}/input(id=${blog.id})}" class="ui mini teal basic button">编辑</a>
               <a href="#" th:href="@{/admin/blogs/{id}/delete(id=${blog.id})}" class="ui mini red basic button">删除</a>
