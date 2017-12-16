@@ -1,7 +1,5 @@
 package com.zxh.controller.admin;
 
-import com.zxh.dao.BlogRespository;
-import com.zxh.dao.TypeRespository;
 import com.zxh.model.Blog;
 import com.zxh.model.User;
 import com.zxh.service.BlogService;
@@ -55,6 +53,21 @@ public class BlogController {
         return "/admin/blogs";
     }
 
+
+    /**
+     * 条件搜索
+     * @param pageable
+     * @param blogQuery
+     * @param model
+     * @return
+     */
+    @PostMapping("/blogs/search")
+    public String search(@PageableDefault(size = 8, direction = Sort.Direction.DESC, sort = {"updateTime"})
+                         Pageable pageable, BlogQuery blogQuery, Model model) {
+        model.addAttribute("page", blogService.listBlog(pageable, blogQuery));
+        //返回html局部片段，实现局部渲染
+        return "/admin/blogs :: blogList";
+    }
 
     /**
      * 新增博客页面
