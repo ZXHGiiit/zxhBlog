@@ -134,7 +134,7 @@ public class BlogController {
             logger.error("BlogController.post.ERROR");
             attributes.addFlashAttribute("message", "操作失败");
         } else {
-            attributes.addFlashAttribute("message", "操作失败");
+            attributes.addFlashAttribute("message", "操作成功");
         }
         return "redirect:/admin/blogs";
     }

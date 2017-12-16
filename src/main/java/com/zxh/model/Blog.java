@@ -252,7 +252,6 @@ public class Blog {
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 ", comments=" + comments +
-                ", userId=" + user.getId() +
                 ", tagIds='" + tagIds + '\'' +
                 ", description='" + description + '\'' +
                 '}';
