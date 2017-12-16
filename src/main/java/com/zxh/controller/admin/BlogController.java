@@ -7,6 +7,7 @@ import com.zxh.model.User;
 import com.zxh.service.BlogService;
 import com.zxh.service.TagService;
 import com.zxh.service.TypeService;
+import com.zxh.util.JacksonUtils;
 import com.zxh.vo.BlogQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +17,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 
 /**
@@ -124,5 +123,13 @@ public class BlogController {
             attributes.addFlashAttribute("message", "操作失败");
         }
         return "redirect:/admin/blogs";
+    }
+
+    @RequestMapping("/test")
+    @ResponseBody
+    public String test() {
+        List<Blog> blogs = blogService.listBlog();
+        logger.info("BlogController.test.info: {}",blogs.toString());
+        return JacksonUtils.toJson(blogs);
     }
 }

@@ -96,4 +96,9 @@ public class BlogServiceImpl implements BlogService {
     public void deleteBlog(Long id) {
         blogRespository.delete(id);
     }
+
+    @Override
+    public List<Blog> listBlog() {
+        return blogRespository.findAll();
+    }
 }
