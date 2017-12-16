@@ -5,6 +5,7 @@ import com.zxh.exception.NotFoundException;
 import com.zxh.model.Blog;
 import com.zxh.model.Type;
 import com.zxh.service.BlogService;
+import com.zxh.util.MyBeanUtils;
 import com.zxh.vo.BlogQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,8 +87,8 @@ public class BlogServiceImpl implements BlogService {
             logger.error("BlogServiceImpl.updateBlog.ERROR.不存在此id的blog, id: {}", id);
             throw new NotFoundException("该博客不存在");
         }
-        //TODO
-        BeanUtils.copyProperties(blog, blog1);
+        //防止为空的属性覆盖了数据库
+        BeanUtils.copyProperties(blog, blog1, MyBeanUtils.getNullPropertyName(blog));
         blog1.setUpdateTime(new Date());//可在数据库设置触发器
         return blogRespository.save(blog1);
     }
