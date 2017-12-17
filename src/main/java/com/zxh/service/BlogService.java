@@ -15,6 +15,8 @@ public interface BlogService {
 
     Page<Blog> listBlog(Pageable pageable, BlogQuery blogQuery);
 
+    Page<Blog> listBlog(Pageable pageable);
+
     Blog saveBlog(Blog blog);
 
     Blog updateBlog(Long id, Blog blog);

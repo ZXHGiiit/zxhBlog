@@ -25,6 +25,13 @@ public interface TagService {
 
     List<Tag> listTag();
 
+    /**
+     * 通过ids来批量查询出Tag。每个Blog都可以对应多个Tag，用于查询出每个Blog的所有Tag
+     * @param ids
+     * @return
+     */
     List<Tag> listTag(String ids);
+
+    List<Tag> listTagTop(Integer size);
 
 }

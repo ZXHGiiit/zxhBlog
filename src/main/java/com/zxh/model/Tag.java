@@ -20,7 +20,7 @@ public class Tag {
     private String name;
 
     @ManyToMany(mappedBy = "tags")
-    private List<Blog> blogs = new ArrayList<>();
+    private List<Blog> blogs = new ArrayList<>();//通过数据库查询，会查询出关联的blogs
 
     public Long getId() {
         return id;
