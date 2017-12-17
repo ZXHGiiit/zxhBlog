@@ -87,7 +87,7 @@ public class BlogServiceImpl implements BlogService {
             logger.error("BlogServiceImpl.updateBlog.ERROR.不存在此id的blog, id: {}", id);
             throw new NotFoundException("该博客不存在");
         }
-        //防止为空的属性覆盖了数据库
+        //防止为空的属性覆盖了数据库。如view这个字段前端没有传过来，我们需要把它忽略
         BeanUtils.copyProperties(blog, blog1, MyBeanUtils.getNullPropertyName(blog));
         blog1.setUpdateTime(new Date());//可在数据库设置触发器
         return blogRespository.save(blog1);
