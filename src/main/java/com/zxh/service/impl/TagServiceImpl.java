@@ -82,7 +82,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<Tag> listTagTop(Integer size) {
-        Sort sort = new Sort(Sort.Direction.DESC, "blogs.size");
+        Sort sort = new Sort(Sort.Direction.DESC, "blogs.size");//以blogs.size作为排序依据
         Pageable pageable= new PageRequest(0, size, sort);
         return tagRespository.findTop(pageable);
     }

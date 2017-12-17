@@ -134,8 +134,8 @@
             <div class="ui secondary segment ">
               <i class="bookmark icon"></i>最新推荐
             </div>
-            <div class="ui segment">
-              <a href="#" target="_blank" class="m-black m-text-thin">用户故事（User Story）</a>
+            <div class="ui segment" th:each="recommendBlog : ${ recommendBlogs}">
+              <a href="#" target="_blank" class="m-black m-text-thin" th:text="${recommendBlog.title}">用户故事（User Story）</a>
             </div>
           </div>
 
