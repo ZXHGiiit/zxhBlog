@@ -1,5 +1,6 @@
 package com.zxh.model;
 
+import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
@@ -20,6 +21,7 @@ public class Tag {
     private String name;
 
     @ManyToMany(mappedBy = "tags")
+    @Where(clause="delete_flag=true")//排除已删除的
     private List<Blog> blogs = new ArrayList<>();//通过数据库查询，会查询出关联的blogs
 
     public Long getId() {

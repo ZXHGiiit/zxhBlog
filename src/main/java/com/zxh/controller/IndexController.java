@@ -43,6 +43,7 @@ public class IndexController {
         model.addAttribute("blogs", blogService.listBlog(pageable));
         model.addAttribute("recommendBlogs", blogService.listReCommendBlogTop(8));
         //logger.info("IndexController.index.info:[reComBlog:{}]", blogService.listReCommendBlogTop(8));
+        //TODO 添加redis缓存
         return "index";
     }
 

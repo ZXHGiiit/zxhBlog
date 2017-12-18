@@ -1,5 +1,6 @@
 package com.zxh.model;
 
+import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
@@ -19,6 +20,7 @@ public class Type {
     @NotBlank(message = "分类名称不能为空")
     private String name;
 
+    @Where(clause="delete_flag=1")//排除已删除的blog
     @OneToMany(mappedBy = "type")
     private List<Blog> blogs = new ArrayList<>();
 
