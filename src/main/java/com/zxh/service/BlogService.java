@@ -38,4 +38,12 @@ public interface BlogService {
      * @return
      */
     List<Blog> listBlogTop(Integer size);
+
+    /**
+     * 全局查询，带分页
+     * @param query
+     * @param pageable
+     * @return
+     */
+    Page<Blog> listPage(String query, Pageable pageable);
 }

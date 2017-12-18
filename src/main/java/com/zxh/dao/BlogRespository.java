@@ -21,4 +21,7 @@ public interface BlogRespository extends JpaRepository<Blog, Long>, JpaSpecifica
 
     @Query("select t from Blog t where t.deleteFlag = false")
     List<Blog> findTop(Pageable pageable);
+
+    @Query("select t from Blog t where t.title like ?1 or t.content like ?1")
+    Page<Blog> findByQuery(String query, Pageable pageable);
 }

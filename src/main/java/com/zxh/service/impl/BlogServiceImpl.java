@@ -129,4 +129,10 @@ public class BlogServiceImpl implements BlogService {
         Pageable pageable = new PageRequest(0, size, sort);
         return blogRespository.findTop(pageable);
     }
+
+    @Override
+    public Page<Blog> listPage(String query, Pageable pageable) {
+        query = "%" + query + "%";//实现模糊查询
+        return blogRespository.findByQuery(query, pageable);
+    }
 }
