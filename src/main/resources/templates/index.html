@@ -26,7 +26,7 @@
                 <h3 class="ui teal header">博客</h3>
               </div>
               <div class="right aligned column">
-                共 <h2 class="ui orange header m-inline-block m-text-thin"> <span th:text="${blogs.totalElements}">14</span> </h2> 篇
+                共 <h2 class="ui orange header m-inline-block m-text-thin"> <span th:text="${page.totalElements}">14</span> </h2> 篇
               </div>
             </div>
           </div>
@@ -34,7 +34,7 @@
           <!--content-->
           <div class="ui attached  segment">
 
-            <div class="ui padded vertical segment m-padded-tb-large" th:each="blog:${blogs.content}">
+            <div class="ui padded vertical segment m-padded-tb-large" th:each="blog:${page.content}">
               <div class="ui mobile reversed stackable grid">
                 <div class="eleven wide column">
                   <h3 class="ui header" ><a th:text="${blog.title}">你真的理解什么是财富自由吗</a></h3>
@@ -75,10 +75,10 @@
           <div class="ui bottom attached segment">
             <div class="ui middle aligned two column grid">
               <div class="column">
-                <a href="#" class="ui mini teal basic button">上一页</a>
+                <a href="#" class="ui mini teal basic button" th:href="@{/(page=${page.number}-1)}"  th:unless="${page.first}">上一页</a>
               </div>
               <div class="right aligned column">
-                <a href="#" class="ui mini teal basic button">下一页</a>
+                <a href="#" class="ui mini teal basic button" th:href="@{/(page=${page.number}+1)}"  th:unless="${page.last}">下一页</a>
               </div>
             </div>
           </div>
