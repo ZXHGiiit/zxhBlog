@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import com.google.common.base.Throwables;
 
 import java.util.HashSet;
 import java.util.List;
@@ -53,8 +54,7 @@ public class JacksonUtils {
       return MAPPER.writerWithView(jsonViewClazz).writeValueAsString(
         obj);
     } catch (Exception e) {
-      //throw Throwables.propagate(e);
-      return "";
+      throw Throwables.propagate(e);
     }
   }
 
@@ -132,8 +132,7 @@ public class JacksonUtils {
     try {
       return mapper.writeValueAsString(obj);
     } catch (Exception e) {
-      //throw Throwables.propagate(e);
-      return "ERROR";
+      throw Throwables.propagate(e);
     }
   }
 
@@ -178,7 +177,7 @@ public class JacksonUtils {
     try {
       jsonNode = MAPPER.readTree(jsonText);
     } catch (Exception e) {
-      //throw Throwables.propagate(e);
+      throw Throwables.propagate(e);
     }
     return jsonNode;
   }

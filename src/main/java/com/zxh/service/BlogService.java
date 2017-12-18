@@ -46,4 +46,11 @@ public interface BlogService {
      * @return
      */
     Page<Blog> listPage(String query, Pageable pageable);
+
+    /**
+     * 获取博客，并将MarkDown转换为html格式，并将
+     * @param id
+     * @return
+     */
+    Blog getAndConvert(Long id);
 }

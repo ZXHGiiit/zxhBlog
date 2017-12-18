@@ -5,6 +5,7 @@ import com.zxh.exception.NotFoundException;
 import com.zxh.model.Blog;
 import com.zxh.model.Type;
 import com.zxh.service.BlogService;
+import com.zxh.util.MarkdownUtils;
 import com.zxh.util.MyBeanUtils;
 import com.zxh.vo.BlogQuery;
 import org.slf4j.Logger;
@@ -134,5 +135,17 @@ public class BlogServiceImpl implements BlogService {
     public Page<Blog> listPage(String query, Pageable pageable) {
         query = "%" + query + "%";//实现模糊查询
         return blogRespository.findByQuery(query, pageable);
+    }
+
+    @Override
+    public Blog getAndConvert(Long id) {
+        Blog blog = blogRespository.findOne(id);
+        if(blog == null) {
+            throw new NotFoundException("该博客不存在");
+        }
+        blog.setContent(MarkdownUtils.markDownToHtml(blog.getContent()));
+        //将views+1
+        blogRespository.updateViews(id);
+        return blog;
     }
 }
