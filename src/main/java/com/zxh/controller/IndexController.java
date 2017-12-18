@@ -1,5 +1,6 @@
 package com.zxh.controller;
 
+import com.zxh.model.Blog;
 import com.zxh.model.Tag;
 import com.zxh.model.Type;
 import com.zxh.service.BlogService;
@@ -8,6 +9,7 @@ import com.zxh.service.TypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -37,12 +39,11 @@ public class IndexController {
                                     Pageable pageable, Model model) {
         List<Tag> tags = tagService.listTagTop(10);//获取前10个标签
         List<Type> types = typeService.listTypeTop(6);//获取前10个标签
-        //logger.info("IndexController.index.info: [Tag:{}, Type:{}]", tags.toString(), types.toString());
         model.addAttribute("tags", tags);
         model.addAttribute("types", types);
         model.addAttribute("blogs", blogService.listBlog(pageable));
         model.addAttribute("recommendBlogs", blogService.listReCommendBlogTop(8));
-        //logger.info("IndexController.index.info:[reComBlog:{}]", blogService.listReCommendBlogTop(8));
+        model.addAttribute("blogsTop", blogService.listBlogTop(3));
         //TODO 添加redis缓存
         return "index";
     }

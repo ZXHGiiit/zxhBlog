@@ -25,5 +25,17 @@ public interface BlogService {
 
     List<Blog> listBlog();
 
+    /**
+     * 最新推荐的博客
+     * @param size
+     * @return
+     */
     List<Blog> listReCommendBlogTop(Integer size);
+
+    /**
+     * 最新的博客
+     * @param size
+     * @return
+     */
+    List<Blog> listBlogTop(Integer size);
 }

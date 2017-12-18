@@ -58,7 +58,7 @@ public class BlogServiceImpl implements BlogService {
                 if (blog.isRecommend()) {
                     predicates.add(cb.equal(root.<Boolean>get("recommend"), blog.isRecommend()));
                 }
-                predicates.add(cb.equal(root.<Boolean>get("deleteFlag"), false));
+                //predicates.add(cb.equal(root.<Boolean>get("deleteFlag"), false));
                 cq.where(predicates.toArray(new Predicate[predicates.size()]));
                 return null;
             }
@@ -121,5 +121,12 @@ public class BlogServiceImpl implements BlogService {
         Sort sort = new Sort(Sort.Direction.DESC, "updateTime");
         Pageable pageable = new PageRequest(0, size, sort);
         return blogRespository.findReCommendTop(pageable);
+    }
+
+    @Override
+    public List<Blog> listBlogTop(Integer size) {
+        Sort sort = new Sort(Sort.Direction.DESC, "updateTime");
+        Pageable pageable = new PageRequest(0, size, sort);
+        return blogRespository.findTop(pageable);
     }
 }

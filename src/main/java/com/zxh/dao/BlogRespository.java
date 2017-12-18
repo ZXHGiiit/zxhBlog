@@ -18,4 +18,7 @@ public interface BlogRespository extends JpaRepository<Blog, Long>, JpaSpecifica
 
     @Query("select t from Blog t where t.recommend = true")
     List<Blog> findReCommendTop(Pageable pageable);
+
+    @Query("select t from Blog t where t.deleteFlag = false")
+    List<Blog> findTop(Pageable pageable);
 }
