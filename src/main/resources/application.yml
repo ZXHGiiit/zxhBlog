@@ -1,7 +1,14 @@
 spring:
   thymeleaf:
     mode: HTML
+
   profiles:
     active: dev
 
+
+
 comment.avatar: /images/avatar.jpg
+
+redis:
+    port: 6379
+    host: zhouxinghang.com
