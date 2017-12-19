@@ -1,6 +1,6 @@
 package com.zxh.service.impl;
 
-import com.zxh.dao.BlogRespository;
+import com.zxh.dao.BlogRepository;
 import com.zxh.exception.NotFoundException;
 import com.zxh.model.Blog;
 import com.zxh.model.Type;
@@ -37,16 +37,16 @@ public class BlogServiceImpl implements BlogService {
     private static final Logger logger = LoggerFactory.getLogger(BlogServiceImpl.class);
 
     @Autowired
-    private BlogRespository blogRespository;
+    private BlogRepository blogRepository;
 
     @Override
     public Blog getBlog(Long id) {
-        return blogRespository.findByIdAndDeleteFlag(id, false);
+        return blogRepository.findByIdAndDeleteFlag(id, false);
     }
 
     @Override
     public Page<Blog> listBlog(Pageable pageable, BlogQuery blog) {
-        return blogRespository.findAll(new Specification<Blog>() {
+        return blogRepository.findAll(new Specification<Blog>() {
             @Override
             public Predicate toPredicate(Root<Blog> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
                 List<Predicate> predicates = new ArrayList<>();
@@ -68,7 +68,7 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public Page<Blog> listBlog(Pageable pageable) {
-        return blogRespository.findAll(pageable);
+        return blogRepository.findAll(pageable);
     }
 
     @Transactional
@@ -83,14 +83,14 @@ public class BlogServiceImpl implements BlogService {
             blog.setUpdateTime(new Date());
         }
 
-        return blogRespository.save(blog);
+        return blogRepository.save(blog);
     }
 
 
     @Transactional
     @Override
     public Blog updateBlog(Long id, Blog blog) {
-        Blog blog1 = blogRespository.findOne(id);
+        Blog blog1 = blogRepository.findOne(id);
         if(blog1 == null) {
             logger.error("BlogServiceImpl.updateBlog.ERROR.不存在此id的blog, id: {}", id);
             throw new NotFoundException("该博客不存在");
@@ -98,54 +98,58 @@ public class BlogServiceImpl implements BlogService {
         //防止为空的属性覆盖了数据库。如view这个字段前端没有传过来，我们需要把它忽略
         BeanUtils.copyProperties(blog, blog1, MyBeanUtils.getNullPropertyName(blog));
         blog1.setUpdateTime(new Date());//可在数据库设置触发器
-        return blogRespository.save(blog1);
+        return blogRepository.save(blog1);
     }
 
     @Transactional
     @Override
     public void deleteBlog(Long id) {
-        Blog blog = blogRespository.findOne(id);
+        Blog blog = blogRepository.findOne(id);
         if(blog == null) {
             logger.error("BlogServiceImpl.deleteBlog.ERROR.blog is not exist. id: {}", id);
         }
         blog.setDeleteFlag(true);
-        blogRespository.save(blog);
+        blogRepository.save(blog);
     }
 
     @Override
     public List<Blog> listBlog() {
-        return blogRespository.findAll();
+        return blogRepository.findAll();
     }
 
     @Override
     public List<Blog> listReCommendBlogTop(Integer size) {
         Sort sort = new Sort(Sort.Direction.DESC, "updateTime");
         Pageable pageable = new PageRequest(0, size, sort);
-        return blogRespository.findReCommendTop(pageable);
+        return blogRepository.findReCommendTop(pageable);
     }
 
     @Override
     public List<Blog> listBlogTop(Integer size) {
         Sort sort = new Sort(Sort.Direction.DESC, "updateTime");
         Pageable pageable = new PageRequest(0, size, sort);
-        return blogRespository.findTop(pageable);
+        return blogRepository.findTop(pageable);
     }
 
     @Override
     public Page<Blog> listPage(String query, Pageable pageable) {
         query = "%" + query + "%";//实现模糊查询
-        return blogRespository.findByQuery(query, pageable);
+        return blogRepository.findByQuery(query, pageable);
     }
 
     @Override
     public Blog getAndConvert(Long id) {
-        Blog blog = blogRespository.findOne(id);
+        Blog blog = blogRepository.findOne(id);
         if(blog == null) {
             throw new NotFoundException("该博客不存在");
         }
-        blog.setContent(MarkdownUtils.markDownToHtml(blog.getContent()));
+
+        //创建一个新的Blog对象，对该新对象进行Markdown格式转换并返回给前端，防止对数据库的数据修改
+        Blog blog1 = new Blog();
+        BeanUtils.copyProperties(blog, blog1);
+        blog1.setContent(MarkdownUtils.markdownToHtmlExtensions(blog.getContent()));
         //将views+1
-        blogRespository.updateViews(id);
-        return blog;
+        blogRepository.updateViews(id);
+        return blog1;
     }
 }

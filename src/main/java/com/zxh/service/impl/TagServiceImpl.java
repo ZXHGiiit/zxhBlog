@@ -1,6 +1,6 @@
 package com.zxh.service.impl;
 
-import com.zxh.dao.TagRespository;
+import com.zxh.dao.TagRepository;
 import com.zxh.exception.NotFoundException;
 import com.zxh.model.Tag;
 import com.zxh.service.TagService;
@@ -14,8 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,62 +27,62 @@ public class TagServiceImpl implements TagService {
     private static final Logger logger = LoggerFactory.getLogger(TagServiceImpl.class);
 
     @Autowired
-    private TagRespository tagRespository;
+    private TagRepository tagRepository;
 
     @Transactional
     @Override
     public Tag saveTag(Tag tag) {
-        return tagRespository.save(tag);
+        return tagRepository.save(tag);
     }
 
     @Transactional
     @Override
     public void deleteTag(Long id) {
-        tagRespository.delete(id);
+        tagRepository.delete(id);
     }
 
     @Transactional
     @Override
     public Tag updateTag(Long id, Tag tag) {
-        Tag tag1 = tagRespository.findOne(id);
+        Tag tag1 = tagRepository.findOne(id);
         if(tag1 == null) {
             logger.error("TagServiceImpl.updateTag.ERROR 不存在该标签. id:{}", id);
             throw new NotFoundException("不存在该标签");
         }
         BeanUtils.copyProperties(tag, tag1);
-        return tagRespository.save(tag1);
+        return tagRepository.save(tag1);
     }
 
     @Override
     public Tag getTag(Long id) {
-        return tagRespository.findOne(id);
+        return tagRepository.findOne(id);
     }
 
     @Override
     public Tag getTagByName(String name) {
-        return tagRespository.findByName(name);
+        return tagRepository.findByName(name);
     }
 
     @Override
     public Page<Tag> listTag(Pageable pageable) {
-        return tagRespository.findAll(pageable);
+        return tagRepository.findAll(pageable);
     }
 
     @Override
     public List<Tag> listTag() {
-        return tagRespository.findAll();
+        return tagRepository.findAll();
     }
 
     @Override
     public List<Tag> listTag(String ids) {
-        return tagRespository.findAll(convertToList(ids));
+        return tagRepository.findAll(convertToList(ids));
     }
 
     @Override
     public List<Tag> listTagTop(Integer size) {
         Sort sort = new Sort(Sort.Direction.DESC, "blogs.size");//以blogs.size作为排序依据
         Pageable pageable= new PageRequest(0, size, sort);
-        return tagRespository.findTop(pageable);
+        return tagRepository.findTop(pageable);
     }
 
 
