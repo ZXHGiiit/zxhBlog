@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by admin on 2017/12/16.
  */
-public interface TagRespository extends JpaRepository<Tag, Long>{
+public interface TagRepository extends JpaRepository<Tag, Long>{
 
     Tag findByName(String name);
 
