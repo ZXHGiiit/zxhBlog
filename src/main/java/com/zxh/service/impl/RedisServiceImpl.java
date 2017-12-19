@@ -6,6 +6,7 @@ import com.zxh.util.JacksonUtils;
 import com.zxh.util.RedisClusterPoolClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -15,6 +16,8 @@ import java.util.Set;
 /**
  * Created by admin on 2017/12/19.
  */
+
+@Service
 public class RedisServiceImpl implements RedisService {
     private static final Logger LOG = LoggerFactory.getLogger(RedisServiceImpl.class);
 

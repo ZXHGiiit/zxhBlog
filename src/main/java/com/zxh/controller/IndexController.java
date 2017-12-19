@@ -6,6 +6,7 @@ import com.zxh.model.Type;
 import com.zxh.service.BlogService;
 import com.zxh.service.TagService;
 import com.zxh.service.TypeService;
+import com.zxh.vo.TagVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +41,9 @@ public class IndexController {
     @GetMapping("/")
     public String index(@PageableDefault(size = 8, sort = {"updateTime"}, direction = Sort.Direction.DESC)
                                     Pageable pageable, Model model) {
-        List<Tag> tags = tagService.listTagTop(10);//获取前10个标签
-        List<Type> types = typeService.listTypeTop(6);//获取前10个标签
-        model.addAttribute("tags", tags);
+        List<TagVo> tagVos = tagService.listTagTop(10);//获取前10个标签
+        List<Type> types = typeService.listTypeTop(6);//获取前6个类型
+        model.addAttribute("tags", tagVos);
         model.addAttribute("types", types);
         model.addAttribute("page", blogService.listBlog(pageable));
         model.addAttribute("recommendBlogs", blogService.listReCommendBlogTop(8));

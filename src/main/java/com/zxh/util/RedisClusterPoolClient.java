@@ -2,11 +2,14 @@ package com.zxh.util;
 
 import com.google.common.base.Strings;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.zxh.model.User;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.session.SessionProperties;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.BinaryClient;
 import redis.clients.jedis.Jedis;
@@ -781,9 +784,25 @@ public class RedisClusterPoolClient {
     }
 
     public static void main(String[] args) {
+        RedisClusterPoolClient.del("blogtagsTop");
         RedisClusterPoolClient.set("hello", "zhouxinghang");
         System.out.println(RedisClusterPoolClient.get("hello"));
         System.out.println(RedisClusterPoolClient.del("hello"));
         System.out.println(RedisClusterPoolClient.get("hello"));
+
+        List<User> users = new ArrayList<>();
+        User user1 = new User();
+        user1.setName("周星航");
+        users.add(user1);
+        User user2 = new User();
+        user2.setName("石素雅");
+        users.add(user2);
+        RedisClusterPoolClient.set("users", JacksonUtils.toJson(users));
+        String usersJson = RedisClusterPoolClient.get("users");
+        List<User> usersBak = JacksonUtils.jsonToList(usersJson, User.class);
+        System.out.println(usersBak.toString());
+
+        String tagsJson = RedisClusterPoolClient.get("001blogtagsTop");
+        System.out.println(tagsJson);
     }
 }

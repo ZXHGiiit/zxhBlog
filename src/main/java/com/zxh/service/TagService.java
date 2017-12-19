@@ -1,6 +1,7 @@
 package com.zxh.service;
 
 import com.zxh.model.Tag;
+import com.zxh.vo.TagVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -32,6 +33,6 @@ public interface TagService {
      */
     List<Tag> listTag(String ids);
 
-    List<Tag> listTagTop(Integer size);
+    List<TagVo> listTagTop(Integer size);
 
 }

@@ -3,7 +3,10 @@ package com.zxh.service.impl;
 import com.zxh.dao.TagRepository;
 import com.zxh.exception.NotFoundException;
 import com.zxh.model.Tag;
+import com.zxh.service.RedisService;
 import com.zxh.service.TagService;
+import com.zxh.util.JacksonUtils;
+import com.zxh.vo.TagVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -25,7 +28,8 @@ import java.util.List;
 @Service
 public class TagServiceImpl implements TagService {
     private static final Logger logger = LoggerFactory.getLogger(TagServiceImpl.class);
-
+    @Autowired
+    private RedisService redisService;
     @Autowired
     private TagRepository tagRepository;
 
@@ -78,11 +82,23 @@ public class TagServiceImpl implements TagService {
         return tagRepository.findAll(convertToList(ids));
     }
 
+
     @Override
-    public List<Tag> listTagTop(Integer size) {
+    public List<TagVo> listTagTop(Integer size) {
+        String tagsJson = redisService.get("blog", "tagsTop");
+        logger.info("TagServiceImpl.listTagTop.tagsJson:{}", tagsJson);
+        if(tagsJson != null) {
+            logger.info("TagServiceImpl.listTagTop.redis has the key-value:{}", tagsJson);
+            List<TagVo> tagVos = JacksonUtils.jsonToList(tagsJson, TagVo.class);
+            return tagVos;
+        }
         Sort sort = new Sort(Sort.Direction.DESC, "blogs.size");//以blogs.size作为排序依据
         Pageable pageable= new PageRequest(0, size, sort);
-        return tagRepository.findTop(pageable);
+        List<Tag> tags = tagRepository.findTop(pageable);
+        List<TagVo> tagVos = toVo(tags);
+        //将结果放入redis缓存
+        redisService.set("blog", "tagsTop", JacksonUtils.toJson(tagVos));
+        return tagVos;
     }
 
 
@@ -96,6 +112,20 @@ public class TagServiceImpl implements TagService {
         }
 
         return list;
+    }
+
+    private List<TagVo> toVo(List<Tag> tags) {
+        List<TagVo> tagVos = new ArrayList<>();
+        if(tags != null) {
+            for(Tag tag : tags) {
+                TagVo vo = new TagVo();
+                vo.setId(tag.getId());
+                vo.setName(tag.getName());
+                vo.setSize(tag.getBlogs().size());
+                tagVos.add(vo);
+            }
+        }
+        return tagVos;
     }
 
 }
