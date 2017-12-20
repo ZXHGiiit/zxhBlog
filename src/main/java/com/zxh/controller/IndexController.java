@@ -40,8 +40,6 @@ public class IndexController {
     private TypeService typeService;
     @Autowired
     private BlogService blogService;
-    @Autowired
-    private HttpSession session;
 
     @GetMapping("/")
     public String index(@PageableDefault(size = 8, sort = {"updateTime"}, direction = Sort.Direction.DESC)
@@ -52,8 +50,6 @@ public class IndexController {
         model.addAttribute("types", types);
         model.addAttribute("page", blogService.listBlog(pageable));
         model.addAttribute("recommendBlogs", blogService.listReCommendBlogTop(8));
-        model.addAttribute("blogsTop", blogService.listBlogTop(3));
-        session.setAttribute("blogsTop", blogService.listBlogTop(3));
         //TODO 添加redis缓存
         return "index";
     }
