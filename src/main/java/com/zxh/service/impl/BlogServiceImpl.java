@@ -4,7 +4,10 @@ import com.zxh.dao.BlogRepository;
 import com.zxh.exception.NotFoundException;
 import com.zxh.model.Blog;
 import com.zxh.model.Type;
+import com.zxh.model.ViewLog;
 import com.zxh.service.BlogService;
+import com.zxh.service.RedisService;
+import com.zxh.service.ViewLogService;
 import com.zxh.util.MarkdownUtils;
 import com.zxh.util.MyBeanUtils;
 import com.zxh.vo.BlogQuery;
@@ -24,6 +27,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,7 +41,13 @@ public class BlogServiceImpl implements BlogService {
     private static final Logger logger = LoggerFactory.getLogger(BlogServiceImpl.class);
 
     @Autowired
+    private HttpServletRequest request;
+    @Autowired
+    private RedisService redisService;
+    @Autowired
     private BlogRepository blogRepository;
+    @Autowired
+    private ViewLogService viewLogService;
 
     @Override
     public Blog getBlog(Long id) {
@@ -148,8 +158,25 @@ public class BlogServiceImpl implements BlogService {
         Blog blog1 = new Blog();
         BeanUtils.copyProperties(blog, blog1);
         blog1.setContent(MarkdownUtils.markdownToHtmlExtensions(blog.getContent()));
-        //将views+1
-        blogRepository.updateViews(id);
+        //改变view
+        String ip = request.getRemoteAddr();
+        if(ip == null) {
+            blogRepository.updateViews(id);
+            return blog1;
+        }
+        Boolean isView = redisService.get(ip, String.valueOf(id), Boolean.class);
+        if(isView == null) {
+            //将该IP的访问记录临时放入redis中
+            redisService.set(ip, String.valueOf(id), true);
+            //从数据库中查询出该ip的访问记录
+            List<Long> blogIds = viewLogService.listBlogIdByIp(ip);
+            if(!blogIds.contains(id)) {
+                //访问记录存入数据库
+                viewLogService.save(new ViewLog(ip, id, new Date()));
+                //blog.view+1
+                blogRepository.updateViews(id);
+            }
+        }
         return blog1;
     }
 }
