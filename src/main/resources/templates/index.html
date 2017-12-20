@@ -104,7 +104,7 @@
               <div class="ui fluid vertical menu">
                 <a href="#" class="item"  th:each="type : ${types}">
                   <span th:text="${type.name}">学习日志</span>
-                  <div class="ui teal basic left pointing label" th:text="${#arrays.length(type.blogs)}">13</div>
+                  <div class="ui teal basic left pointing label" th:text="${type.size}">13</div>
                 </a>
               </div>
             </div>

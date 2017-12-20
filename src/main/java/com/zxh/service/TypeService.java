@@ -1,6 +1,7 @@
 package com.zxh.service;
 
 import com.zxh.model.Type;
+import com.zxh.vo.TypeVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -25,5 +26,5 @@ public interface TypeService {
 
     List<Type> listType();
 
-    List<Type> listTypeTop(Integer size);
+    List<TypeVo> listTypeTop(Integer size);
 }
