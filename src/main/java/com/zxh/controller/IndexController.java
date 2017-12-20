@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -38,6 +40,8 @@ public class IndexController {
     private TypeService typeService;
     @Autowired
     private BlogService blogService;
+    @Autowired
+    private HttpSession session;
 
     @GetMapping("/")
     public String index(@PageableDefault(size = 8, sort = {"updateTime"}, direction = Sort.Direction.DESC)
@@ -49,6 +53,7 @@ public class IndexController {
         model.addAttribute("page", blogService.listBlog(pageable));
         model.addAttribute("recommendBlogs", blogService.listReCommendBlogTop(8));
         model.addAttribute("blogsTop", blogService.listBlogTop(3));
+        session.setAttribute("blogsTop", blogService.listBlogTop(3));
         //TODO 添加redis缓存
         return "index";
     }

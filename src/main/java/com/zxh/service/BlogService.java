@@ -17,6 +17,14 @@ public interface BlogService {
 
     Page<Blog> listBlog(Pageable pageable);
 
+    /**
+     * 通过tagId获取博客
+     * @param tagId
+     * @param pageable
+     * @return
+     */
+    Page<Blog> listBlogByTagId(Long tagId, Pageable pageable);
+
     Blog saveBlog(Blog blog);
 
     Blog updateBlog(Long id, Blog blog);
@@ -38,6 +46,7 @@ public interface BlogService {
      * @return
      */
     List<Blog> listBlogTop(Integer size);
+
 
     /**
      * 全局查询，带分页
