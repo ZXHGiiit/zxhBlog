@@ -4,6 +4,7 @@ import com.zxh.model.Tag;
 import com.zxh.service.BlogService;
 import com.zxh.service.RedisService;
 import com.zxh.service.TagService;
+import com.zxh.vo.BlogQuery;
 import com.zxh.vo.TagVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -51,6 +52,8 @@ public class TagShowController {
         model.addAttribute("tags", tagVos);
         model.addAttribute("page", blogService.listBlogByTagId(id, pageable));
         model.addAttribute("activeTagId", id);
+
+        BlogQuery blogQuery = new BlogQuery();
         return "tags";
     }
 
