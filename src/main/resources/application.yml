@@ -5,6 +5,8 @@ spring:
   profiles:
     active: dev
 
+  messages:
+      basename: i18n/message
 
 
 comment.avatar: /images/avatar.jpg
