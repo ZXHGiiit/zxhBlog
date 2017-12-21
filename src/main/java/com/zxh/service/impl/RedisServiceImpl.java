@@ -6,6 +6,8 @@ import com.zxh.util.JacksonUtils;
 import com.zxh.util.RedisClusterPoolClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -20,7 +22,10 @@ import java.util.Set;
 @Service
 public class RedisServiceImpl implements RedisService {
     private static final Logger LOG = LoggerFactory.getLogger(RedisServiceImpl.class);
-
+    @Value("${spring.redis.version}")
+    private String VERSION;
+    @Autowired
+    private RedisClusterPoolClient redisClusterPoolClient;
 
     public void set(String area, String key, String value) {
         if (key == null) {
@@ -28,7 +33,7 @@ public class RedisServiceImpl implements RedisService {
         }
         key = area.trim() + key.trim();
         try {
-            RedisClusterPoolClient.set(RedisClusterPoolClient.VERSION + key,
+            redisClusterPoolClient.set(VERSION + key,
                     value);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -38,7 +43,7 @@ public class RedisServiceImpl implements RedisService {
     public boolean exists(String area, String key) {
         key = area.trim() + key.trim();
         try {
-            return RedisClusterPoolClient.exists(RedisClusterPoolClient.VERSION
+            return redisClusterPoolClient.exists(VERSION
                     + key);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -52,8 +57,8 @@ public class RedisServiceImpl implements RedisService {
         }
         key = area.trim() + key.trim();
         try {
-            RedisClusterPoolClient.setex(
-                    RedisClusterPoolClient.VERSION + key, expireTime, value);
+            redisClusterPoolClient.setex(
+                    VERSION + key, expireTime, value);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
@@ -68,7 +73,7 @@ public class RedisServiceImpl implements RedisService {
         }
         key = area.trim() + key.trim();
         try {
-            RedisClusterPoolClient.set(RedisClusterPoolClient.VERSION + key,
+            redisClusterPoolClient.set(VERSION + key,
                     JacksonUtils.toJson(obj));
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -84,8 +89,8 @@ public class RedisServiceImpl implements RedisService {
         }
         key = area.trim() + key.trim();
         try {
-            RedisClusterPoolClient.setex(
-                    RedisClusterPoolClient.VERSION + key, expireTime,
+            redisClusterPoolClient.setex(
+                    VERSION + key, expireTime,
                     JacksonUtils.toJson(obj));
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -98,7 +103,7 @@ public class RedisServiceImpl implements RedisService {
         }
         key = area.trim() + key.trim();
         try {
-            return RedisClusterPoolClient.get(RedisClusterPoolClient.VERSION
+            return redisClusterPoolClient.get(VERSION
                     + key);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -112,7 +117,7 @@ public class RedisServiceImpl implements RedisService {
         }
         key = area.trim() + key.trim();
         try {
-            return RedisClusterPoolClient.getSet(RedisClusterPoolClient.VERSION
+            return redisClusterPoolClient.getSet(VERSION
                     + key, value);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -127,7 +132,7 @@ public class RedisServiceImpl implements RedisService {
             }
             key = area.trim() + key.trim();
             String value =
-                    RedisClusterPoolClient.get(RedisClusterPoolClient.VERSION
+                    redisClusterPoolClient.get(VERSION
                             + key);
             if (value != null) {
                 return JacksonUtils.jsonToPojo(value, clazz);
@@ -143,8 +148,8 @@ public class RedisServiceImpl implements RedisService {
         try {
             key = area.trim() + key.trim();
             List<String> list =
-                    RedisClusterPoolClient.lrange(
-                            RedisClusterPoolClient.VERSION + key, 0, -1);
+                    redisClusterPoolClient.lrange(
+                            VERSION + key, 0, -1);
             if (list == null) {
                 return null;
             }
@@ -167,7 +172,7 @@ public class RedisServiceImpl implements RedisService {
         }
         key = area.trim() + key.trim();
         try {
-            return RedisClusterPoolClient.ttl(RedisClusterPoolClient.VERSION
+            return redisClusterPoolClient.ttl(VERSION
                     + key);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -179,7 +184,7 @@ public class RedisServiceImpl implements RedisService {
         key = area.trim() + key.trim();
 
         try {
-            return RedisClusterPoolClient.del(RedisClusterPoolClient.VERSION
+            return redisClusterPoolClient.del(VERSION
                     + key);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -230,7 +235,7 @@ public class RedisServiceImpl implements RedisService {
     public Long incr(String area, String key) {
         try {
             key = area.trim() + key.trim();
-            return RedisClusterPoolClient.incr(RedisClusterPoolClient.VERSION + key);
+            return redisClusterPoolClient.incr(VERSION + key);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return 0L;
@@ -240,7 +245,7 @@ public class RedisServiceImpl implements RedisService {
     public Long decr(String area, String key) {
         try {
             key = area.trim() + key.trim();
-            return RedisClusterPoolClient.decr(RedisClusterPoolClient.VERSION + key);
+            return redisClusterPoolClient.decr(VERSION + key);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return 0L;
@@ -250,7 +255,7 @@ public class RedisServiceImpl implements RedisService {
     public Long incrV2(String area, String key) {
         try {
             key = area.trim() + key.trim();
-            return RedisClusterPoolClient.incr(RedisClusterPoolClient.VERSION + key);
+            return redisClusterPoolClient.incr(VERSION + key);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return 0L;
@@ -260,7 +265,7 @@ public class RedisServiceImpl implements RedisService {
     public Long incrBy(String area, String key, int Integer) {
         try {
             key = area.trim() + key.trim();
-            return RedisClusterPoolClient.incrBy(RedisClusterPoolClient.VERSION + key, Integer);
+            return redisClusterPoolClient.incrBy(VERSION + key, Integer);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return 0L;
@@ -269,7 +274,7 @@ public class RedisServiceImpl implements RedisService {
 
     public Set<String> keys(String pattern) {
         try {
-            return RedisClusterPoolClient.keys(pattern);
+            return redisClusterPoolClient.keys(pattern);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return new HashSet<String>();
@@ -279,7 +284,7 @@ public class RedisServiceImpl implements RedisService {
 
     public String get(String key) {
         try {
-            return RedisClusterPoolClient.get(key);
+            return redisClusterPoolClient.get(key);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return null;
@@ -290,7 +295,7 @@ public class RedisServiceImpl implements RedisService {
         String newKey = area.trim() + key.trim();
         Long columns = 0l;
         try {
-            columns = RedisClusterPoolClient.sadd(RedisClusterPoolClient.VERSION + newKey,
+            columns = redisClusterPoolClient.sadd(VERSION + newKey,
                     members);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -302,7 +307,7 @@ public class RedisServiceImpl implements RedisService {
         String newKey = area.trim() + key.trim();
         Long columns = 0l;
         try {
-            columns = RedisClusterPoolClient.sadd(RedisClusterPoolClient.VERSION + newKey, seconds,
+            columns = redisClusterPoolClient.sadd(VERSION + newKey, seconds,
                     members);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -315,7 +320,7 @@ public class RedisServiceImpl implements RedisService {
 
         Set<String> members = null;
         try {
-            members = RedisClusterPoolClient.smembers(RedisClusterPoolClient.VERSION + newKey);
+            members = redisClusterPoolClient.smembers(VERSION + newKey);
             if (members == null) {
                 members = Collections.emptySet();
             }
@@ -329,7 +334,7 @@ public class RedisServiceImpl implements RedisService {
         String newKey = area.trim() + key.trim();
         Long columns = 0l;
         try {
-            columns = RedisClusterPoolClient.srem(RedisClusterPoolClient.VERSION + newKey,
+            columns = redisClusterPoolClient.srem(VERSION + newKey,
                     members);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -340,7 +345,7 @@ public class RedisServiceImpl implements RedisService {
     public boolean sismember(String area, String key, String member) {
         String newKey = area.trim() + key.trim();
         try {
-            return RedisClusterPoolClient.sismember(RedisClusterPoolClient.VERSION + newKey,
+            return redisClusterPoolClient.sismember(VERSION + newKey,
                     member);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -351,7 +356,7 @@ public class RedisServiceImpl implements RedisService {
     public Set<String> hkeys(String area, String key) {
         String newKey = area.trim() + key.trim();
         try {
-            return RedisClusterPoolClient.hkeys(RedisClusterPoolClient.VERSION + newKey);
+            return redisClusterPoolClient.hkeys(VERSION + newKey);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
@@ -361,7 +366,7 @@ public class RedisServiceImpl implements RedisService {
     public Long hdel(String area, String key, String... entityKey) {
         String newKey = area.trim() + key.trim();
         try {
-            return RedisClusterPoolClient.hdel(RedisClusterPoolClient.VERSION + newKey, entityKey);
+            return redisClusterPoolClient.hdel(VERSION + newKey, entityKey);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
@@ -371,7 +376,7 @@ public class RedisServiceImpl implements RedisService {
     public Long hsetnx(String area, String key, String entityKey, String entityValue) {
         String newKey = area.trim() + key.trim();
         try {
-            return RedisClusterPoolClient.hsetnx(RedisClusterPoolClient.VERSION + newKey, entityKey,
+            return redisClusterPoolClient.hsetnx(VERSION + newKey, entityKey,
                     entityValue);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -383,7 +388,7 @@ public class RedisServiceImpl implements RedisService {
         String newKey = area.trim() + key.trim();
         Long columns = 0l;
         try {
-            columns = RedisClusterPoolClient.expire(RedisClusterPoolClient.VERSION + newKey,
+            columns = redisClusterPoolClient.expire(VERSION + newKey,
                     seconds);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -395,7 +400,7 @@ public class RedisServiceImpl implements RedisService {
         String newKey = area.trim() + key.trim();
         long result = 0l;
         try {
-            result = RedisClusterPoolClient.setnx(RedisClusterPoolClient.VERSION + newKey, value);
+            result = redisClusterPoolClient.setnx(VERSION + newKey, value);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }

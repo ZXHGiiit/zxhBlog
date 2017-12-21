@@ -1,20 +1,16 @@
 package com.zxh.util;
 
-import com.google.common.base.Strings;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.zxh.model.User;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.session.SessionProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.BinaryClient;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.SortingParams;
 import redis.clients.jedis.Tuple;
 
@@ -22,17 +18,16 @@ import redis.clients.jedis.Tuple;
 /**
  * Created by admin on 2017/12/19.
  */
-public class RedisClusterPoolClient {
-    private static JedisPool pool;
 
+@Component
+public class RedisClusterPoolClient {
+    @Autowired
+    private  JedisPool pool;
     public static String VERSION = "001";
 
-    @Value("${redis.ip}")
-    private static String ip = "zhouxinghang.com";
-    @Value("${redis.port}")
-    private static String port = "6379";
+    /*
     static {
-
+        System.out.println("RedisClusterPoolClient.ip:"+ip);
         try {
             JedisPoolConfig config = new JedisPoolConfig();
             config.setMaxIdle(200);
@@ -51,43 +46,43 @@ public class RedisClusterPoolClient {
             e.printStackTrace(System.err);
         }
     }
-
-    public static String set(String key, String value) {
+    */
+    public String set(String key, String value) {
         Jedis jedis = pool.getResource();
         String r = jedis.set(key, value);
         pool.returnResource(jedis);
         return r;
     }
 
-    public static String get(String key) {
+    public String get(String key) {
         Jedis jedis = pool.getResource();
         String r = jedis.get(key);
         pool.returnResource(jedis);
         return r;
     }
 
-    public static Boolean exists(String key) {
+    public Boolean exists(String key) {
         Jedis jedis = pool.getResource();
         Boolean r = jedis.exists(key);
         pool.returnResource(jedis);
         return r;
     }
 
-    public static String type(String key) {
+    public String type(String key) {
         Jedis jedis = pool.getResource();
         String r = jedis.type(key);
         pool.returnResource(jedis);
         return r;
     }
 
-    public static Long expire(String key, int seconds) {
+    public Long expire(String key, int seconds) {
         Jedis jedis = pool.getResource();
         Long r = jedis.expire(key, seconds);
         pool.returnResource(jedis);
         return r;
     }
 
-    public static Long expire(int seconds, String... keys) {
+    public Long expire(int seconds, String... keys) {
         long result = 0;
         for (String key : keys) {
             Jedis jedis = pool.getResource();
@@ -97,7 +92,7 @@ public class RedisClusterPoolClient {
         return result;
     }
 
-    public static Long expire(final Set<String> keys, int seconds) {
+    public Long expire(final Set<String> keys, int seconds) {
         long result = 0;
         for (String key : keys) {
             Jedis jedis = pool.getResource();
@@ -107,7 +102,7 @@ public class RedisClusterPoolClient {
         return result;
     }
 
-    public static Long expireBinary(final Set<byte[]> keys, int seconds) {
+    public Long expireBinary(final Set<byte[]> keys, int seconds) {
         long result = 0;
         for (byte[] key : keys) {
             Jedis jedis = pool.getResource();
@@ -117,42 +112,42 @@ public class RedisClusterPoolClient {
         return result;
     }
 
-    public static Long expireAt(String key, long unixTime) {
+    public Long expireAt(String key, long unixTime) {
         Jedis jedis = pool.getResource();
         Long r = jedis.expireAt(key, unixTime);
         pool.returnResource(jedis);
         return r;
     }
 
-    public static Long ttl(String key) {
+    public Long ttl(String key) {
         Jedis jedis = pool.getResource();
         Long r = jedis.ttl(key);
         pool.returnResource(jedis);
         return r;
     }
 
-    public static Boolean setbit(String key, long offset, boolean value) {
+    public Boolean setbit(String key, long offset, boolean value) {
         Jedis jedis = pool.getResource();
         boolean r = jedis.setbit(key, offset, value);
         pool.returnResource(jedis);
         return r;
     }
 
-    public static Boolean getbit(String key, long offset) {
+    public Boolean getbit(String key, long offset) {
         Jedis jedis = pool.getResource();
         boolean r = jedis.getbit(key, offset);
         pool.returnResource(jedis);
         return r;
     }
 
-    public static Long setrange(String key, long offset, String value) {
+    public Long setrange(String key, long offset, String value) {
         Jedis jedis = pool.getResource();
         long r = jedis.setrange(key, offset, value);
         pool.returnResource(jedis);
         return r;
     }
 
-    public static String getrange(String key, long startOffset, long endOffset) {
+    public String getrange(String key, long startOffset, long endOffset) {
 
         Jedis jedis = pool.getResource();
         String r = jedis.getrange(key, startOffset, endOffset);
@@ -160,7 +155,7 @@ public class RedisClusterPoolClient {
         return r;
     }
 
-    public static String getSet(String key, String value) {
+    public String getSet(String key, String value) {
 
         Jedis jedis = pool.getResource();
         String r = jedis.getSet(key, value);
@@ -168,7 +163,7 @@ public class RedisClusterPoolClient {
         return r;
     }
 
-    public static Long setnx(String key, String value) {
+    public Long setnx(String key, String value) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.setnx(key, value);
@@ -176,7 +171,7 @@ public class RedisClusterPoolClient {
         return r;
     }
 
-    public static String setex(String key, int seconds, String value) {
+    public String setex(String key, int seconds, String value) {
 
         Jedis jedis = pool.getResource();
         String r = jedis.setex(key, seconds, value);
@@ -184,7 +179,7 @@ public class RedisClusterPoolClient {
         return r;
     }
 
-    public static Long decrBy(String key, long integer) {
+    public Long decrBy(String key, long integer) {
         Jedis jedis = pool.getResource();
         Long r = jedis.decrBy(key, integer);
         pool.returnResource(jedis);
@@ -192,7 +187,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long decr(String key) {
+    public Long decr(String key) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.decr(key);
@@ -201,7 +196,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long incrBy(String key, long integer) {
+    public Long incrBy(String key, long integer) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.incrBy(key, integer);
@@ -210,7 +205,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long incr(String key) {
+    public Long incr(String key) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.incr(key);
@@ -219,7 +214,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long append(String key, String value) {
+    public Long append(String key, String value) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.append(key, value);
@@ -228,7 +223,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static String substr(String key, int start, int end) {
+    public String substr(String key, int start, int end) {
 
         Jedis jedis = pool.getResource();
         String r = jedis.substr(key, start, end);
@@ -237,7 +232,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long hset(String key, String field, String value) {
+    public Long hset(String key, String field, String value) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.hset(key, field, value);
@@ -246,7 +241,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static String hget(String key, String field) {
+    public String hget(String key, String field) {
 
         Jedis jedis = pool.getResource();
         String r = jedis.hget(key, field);
@@ -254,7 +249,7 @@ public class RedisClusterPoolClient {
         return r;
     }
 
-    public static Long hsetnx(String key, String field, String value) {
+    public Long hsetnx(String key, String field, String value) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.hsetnx(key, field, value);
@@ -263,7 +258,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static String hmset(String key, Map<String, String> hash) {
+    public String hmset(String key, Map<String, String> hash) {
 
         Jedis jedis = pool.getResource();
         String r = jedis.hmset(key, hash);
@@ -272,7 +267,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static List<String> hmget(String key, String... fields) {
+    public List<String> hmget(String key, String... fields) {
 
         Jedis jedis = pool.getResource();
         List<String> r = jedis.hmget(key, fields);
@@ -281,7 +276,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long hincrBy(String key, String field, long value) {
+    public Long hincrBy(String key, String field, long value) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.hincrBy(key, field, value);
@@ -290,7 +285,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Boolean hexists(String key, String field) {
+    public Boolean hexists(String key, String field) {
 
         Jedis jedis = pool.getResource();
         Boolean r = jedis.hexists(key, field);
@@ -299,7 +294,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long hdel(String key, String... fields) {
+    public Long hdel(String key, String... fields) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.hdel(key, fields);
@@ -308,7 +303,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long hlen(String key) {
+    public Long hlen(String key) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.hlen(key);
@@ -317,7 +312,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Set<String> hkeys(String key) {
+    public Set<String> hkeys(String key) {
 
         Jedis jedis = pool.getResource();
         Set<String> r = jedis.hkeys(key);
@@ -326,7 +321,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static List<String> hvals(String key) {
+    public List<String> hvals(String key) {
 
         Jedis jedis = pool.getResource();
         List<String> r = jedis.hvals(key);
@@ -335,7 +330,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Map<String, String> hgetAll(String key) {
+    public Map<String, String> hgetAll(String key) {
 
         Jedis jedis = pool.getResource();
         Map<String, String> r = jedis.hgetAll(key);
@@ -344,7 +339,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long rpush(String key, String... strings) {
+    public Long rpush(String key, String... strings) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.rpush(key, strings);
@@ -353,7 +348,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long lpush(String key, String... strings) {
+    public Long lpush(String key, String... strings) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.lpush(key, strings);
@@ -362,7 +357,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long llen(String key) {
+    public Long llen(String key) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.llen(key);
@@ -371,7 +366,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static List<String> lrange(String key, long start, long end) {
+    public List<String> lrange(String key, long start, long end) {
 
         Jedis jedis = pool.getResource();
         List<String> r = jedis.lrange(key, start, end);
@@ -380,7 +375,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static String ltrim(String key, long start, long end) {
+    public String ltrim(String key, long start, long end) {
 
         Jedis jedis = pool.getResource();
         String r = jedis.ltrim(key, start, end);
@@ -389,7 +384,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static String lindex(String key, long index) {
+    public String lindex(String key, long index) {
 
         Jedis jedis = pool.getResource();
         String r = jedis.lindex(key, index);
@@ -398,21 +393,21 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static String lset(String key, long index, String value) {
+    public String lset(String key, long index, String value) {
         Jedis jedis = pool.getResource();
         String r = jedis.lset(key, index, value);
         pool.returnResource(jedis);
         return r;
     }
 
-    public static Long lrem(String key, long count, String value) {
+    public Long lrem(String key, long count, String value) {
         Jedis jedis = pool.getResource();
         Long r = jedis.lrem(key, count, value);
         pool.returnResource(jedis);
         return r;
     }
 
-    public static String blpop(String key, final int timeoutSecs) {
+    public String blpop(String key, final int timeoutSecs) {
         Jedis jedis = pool.getResource();
         List<String> r = jedis.blpop(timeoutSecs, key);
         pool.returnResource(jedis);
@@ -423,7 +418,7 @@ public class RedisClusterPoolClient {
         }
     }
 
-    public static String brpop(String key, final int timeoutSecs) {
+    public String brpop(String key, final int timeoutSecs) {
         Jedis jedis = pool.getResource();
         List<String> r = jedis.brpop(timeoutSecs, key);
         pool.returnResource(jedis);
@@ -434,7 +429,7 @@ public class RedisClusterPoolClient {
         }
     }
 
-    public static byte[] blpop(byte[] key, final int timeoutSecs) {
+    public byte[] blpop(byte[] key, final int timeoutSecs) {
         Jedis jedis = pool.getResource();
         List<byte[]> r = jedis.blpop(timeoutSecs, key);
         pool.returnResource(jedis);
@@ -445,7 +440,7 @@ public class RedisClusterPoolClient {
         }
     }
 
-    public static byte[] brpop(byte[] key, final int timeoutSecs) {
+    public byte[] brpop(byte[] key, final int timeoutSecs) {
         Jedis jedis = pool.getResource();
         List<byte[]> r = jedis.brpop(timeoutSecs, key);
         pool.returnResource(jedis);
@@ -456,7 +451,7 @@ public class RedisClusterPoolClient {
         }
     }
 
-    public static String lpop(String key) {
+    public String lpop(String key) {
 
         Jedis jedis = pool.getResource();
         String r = jedis.lpop(key);
@@ -464,7 +459,7 @@ public class RedisClusterPoolClient {
         return r;
     }
 
-    public static String rpop(String key) {
+    public String rpop(String key) {
 
         Jedis jedis = pool.getResource();
         String r = jedis.rpop(key);
@@ -473,7 +468,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long sadd(String key, String... members) {
+    public Long sadd(String key, String... members) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.sadd(key, members);
@@ -482,7 +477,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long sadd(String key, int seconds, String... members) {
+    public Long sadd(String key, int seconds, String... members) {
         Jedis jedis = pool.getResource();
         Long r = jedis.sadd(key, members);
         jedis.expire(key, seconds);
@@ -491,7 +486,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Set<String> smembers(String key) {
+    public Set<String> smembers(String key) {
 
         Jedis jedis = pool.getResource();
         Set<String> r = jedis.smembers(key);
@@ -500,7 +495,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long srem(String key, String... members) {
+    public Long srem(String key, String... members) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.srem(key, members);
@@ -509,7 +504,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static String spop(String key) {
+    public String spop(String key) {
 
         Jedis jedis = pool.getResource();
         String r = jedis.spop(key);
@@ -518,7 +513,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long scard(String key) {
+    public Long scard(String key) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.scard(key);
@@ -527,7 +522,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Boolean sismember(String key, String member) {
+    public Boolean sismember(String key, String member) {
 
         Jedis jedis = pool.getResource();
         Boolean r = jedis.sismember(key, member);
@@ -536,7 +531,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static String srandmember(String key) {
+    public String srandmember(String key) {
 
         Jedis jedis = pool.getResource();
         String r = jedis.srandmember(key);
@@ -545,7 +540,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long zadd(String key, double score, String member) {
+    public Long zadd(String key, double score, String member) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.zadd(key, score, member);
@@ -554,7 +549,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Set<String> zrange(String key, int start, int end) {
+    public Set<String> zrange(String key, int start, int end) {
 
         Jedis jedis = pool.getResource();
         Set<String> r = jedis.zrange(key, start, end);
@@ -563,7 +558,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long zrem(String key, String... members) {
+    public Long zrem(String key, String... members) {
         Jedis jedis = pool.getResource();
         Long r = jedis.zrem(key, members);
         pool.returnResource(jedis);
@@ -571,7 +566,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Double zincrby(String key, double score, String member) {
+    public Double zincrby(String key, double score, String member) {
 
         Jedis jedis = pool.getResource();
         Double r = jedis.zincrby(key, score, member);
@@ -580,7 +575,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long zrank(String key, String member) {
+    public Long zrank(String key, String member) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.zrank(key, member);
@@ -589,7 +584,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long zrevrank(String key, String member) {
+    public Long zrevrank(String key, String member) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.zrevrank(key, member);
@@ -598,7 +593,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Set<String> zrevrange(String key, int start, int end) {
+    public Set<String> zrevrange(String key, int start, int end) {
 
         Jedis jedis = pool.getResource();
         Set<String> r = jedis.zrevrange(key, start, end);
@@ -606,7 +601,7 @@ public class RedisClusterPoolClient {
         return r;
     }
 
-    public static Set<Tuple> zrangeWithScores(String key, int start, int end) {
+    public Set<Tuple> zrangeWithScores(String key, int start, int end) {
 
         Jedis jedis = pool.getResource();
         Set<Tuple> r = jedis.zrangeWithScores(key, start, end);
@@ -615,7 +610,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Set<Tuple> zrevrangeWithScores(String key, int start, int end) {
+    public Set<Tuple> zrevrangeWithScores(String key, int start, int end) {
 
         Jedis jedis = pool.getResource();
         Set<Tuple> r = jedis.zrevrangeWithScores(key, start, end);
@@ -623,7 +618,7 @@ public class RedisClusterPoolClient {
         return r;
     }
 
-    public static Long zcard(String key) {
+    public Long zcard(String key) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.zcard(key);
@@ -632,7 +627,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Double zscore(String key, String member) {
+    public Double zscore(String key, String member) {
 
         Jedis jedis = pool.getResource();
         Double r = jedis.zscore(key, member);
@@ -641,7 +636,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static List<String> sort(String key) {
+    public  List<String> sort(String key) {
 
         Jedis jedis = pool.getResource();
         List<String> r = jedis.sort(key);
@@ -650,7 +645,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static List<String> sort(String key, SortingParams sortingParameters) {
+    public List<String> sort(String key, SortingParams sortingParameters) {
 
         Jedis jedis = pool.getResource();
         List<String> r = jedis.sort(key, sortingParameters);
@@ -659,7 +654,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long zcount(String key, double min, double max) {
+    public Long zcount(String key, double min, double max) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.zcount(key, min, max);
@@ -667,7 +662,7 @@ public class RedisClusterPoolClient {
         return r;
     }
 
-    public static Set<String> zrangeByScore(String key, double min, double max) {
+    public Set<String> zrangeByScore(String key, double min, double max) {
 
         Jedis jedis = pool.getResource();
         Set<String> r = jedis.zrangeByScore(key, min, max);
@@ -675,7 +670,7 @@ public class RedisClusterPoolClient {
         return r;
     }
 
-    public static Set<String> zrevrangeByScore(String key, double max, double min) {
+    public Set<String> zrevrangeByScore(String key, double max, double min) {
 
         Jedis jedis = pool.getResource();
         Set<String> r = jedis.zrevrangeByScore(key, max, min);
@@ -684,7 +679,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Set<String> zrangeByScore(String key, double min, double max, int offset, int
+    public Set<String> zrangeByScore(String key, double min, double max, int offset, int
             count) {
 
         Jedis jedis = pool.getResource();
@@ -694,7 +689,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Set<String> zrevrangeByScore(String key, double max, double min, int offset,
+    public  Set<String> zrevrangeByScore(String key, double max, double min, int offset,
                                                int count) {
 
         Jedis jedis = pool.getResource();
@@ -704,7 +699,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Set<Tuple> zrangeByScoreWithScores(String key, double min, double max) {
+    public Set<Tuple> zrangeByScoreWithScores(String key, double min, double max) {
 
         Jedis jedis = pool.getResource();
         Set<Tuple> r = jedis.zrangeByScoreWithScores(key, min, max);
@@ -712,7 +707,7 @@ public class RedisClusterPoolClient {
         return r;
     }
 
-    public static Set<Tuple> zrevrangeByScoreWithScores(String key, double max, double min) {
+    public  Set<Tuple> zrevrangeByScoreWithScores(String key, double max, double min) {
 
         Jedis jedis = pool.getResource();
         Set<Tuple> r = jedis.zrevrangeByScoreWithScores(key, max, min);
@@ -720,7 +715,7 @@ public class RedisClusterPoolClient {
         return r;
     }
 
-    public static Set<Tuple> zrangeByScoreWithScores(String key, double min, double max, int offset,
+    public Set<Tuple> zrangeByScoreWithScores(String key, double min, double max, int offset,
                                                      int count) {
 
         Jedis jedis = pool.getResource();
@@ -730,7 +725,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Set<Tuple> zrevrangeByScoreWithScores(String key, double max, double min,
+    public Set<Tuple> zrevrangeByScoreWithScores(String key, double max, double min,
                                                         int offset, int count) {
 
         Jedis jedis = pool.getResource();
@@ -740,7 +735,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long zremrangeByRank(String key, int start, int end) {
+    public Long zremrangeByRank(String key, int start, int end) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.zremrangeByRank(key, start, end);
@@ -749,7 +744,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long zremrangeByScore(String key, double start, double end) {
+    public Long zremrangeByScore(String key, double start, double end) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.zremrangeByScore(key, start, end);
@@ -758,7 +753,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long linsert(String key, BinaryClient.LIST_POSITION where, String pivot, String
+    public Long linsert(String key, BinaryClient.LIST_POSITION where, String pivot, String
             value) {
 
         Jedis jedis = pool.getResource();
@@ -768,7 +763,7 @@ public class RedisClusterPoolClient {
 
     }
 
-    public static Long del(String... keys) {
+    public Long del(String... keys) {
 
         Jedis jedis = pool.getResource();
         Long r = jedis.del(keys);
@@ -776,33 +771,13 @@ public class RedisClusterPoolClient {
         return r;
     }
 
-    public static Set<String> keys(String pattern) {
+    public Set<String> keys(String pattern) {
         Jedis jedis = pool.getResource();
         Set<String> patternKeys = jedis.keys(pattern);
         pool.returnResource(jedis);
         return patternKeys;
     }
 
-    public static void main(String[] args) {
-        RedisClusterPoolClient.del("blogtagsTop");
-        RedisClusterPoolClient.set("hello", "zhouxinghang");
-        System.out.println(RedisClusterPoolClient.get("hello"));
-        System.out.println(RedisClusterPoolClient.del("hello"));
-        System.out.println(RedisClusterPoolClient.get("hello"));
-
-        List<User> users = new ArrayList<>();
-        User user1 = new User();
-        user1.setName("周星航");
-        users.add(user1);
-        User user2 = new User();
-        user2.setName("石素雅");
-        users.add(user2);
-        RedisClusterPoolClient.set("users", JacksonUtils.toJson(users));
-        String usersJson = RedisClusterPoolClient.get("users");
-        List<User> usersBak = JacksonUtils.jsonToList(usersJson, User.class);
-        System.out.println(usersBak.toString());
-
-        String tagsJson = RedisClusterPoolClient.get("001blogtagsTop");
-        System.out.println(tagsJson);
+    public void main(String[] args) {
     }
 }
