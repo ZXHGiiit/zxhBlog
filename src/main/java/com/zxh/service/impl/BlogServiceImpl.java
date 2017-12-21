@@ -25,10 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.*;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by admin on 2017/12/16.
@@ -196,6 +193,13 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public Map<String, List<Blog>> archiveBlog() {
-        return null;
+        //获取年分
+        List<String> years = blogRepository.findGroupYear();
+        Map<String, List<Blog>> map = new HashMap<>();
+        for(String year : years) {
+            map.put(year, blogRepository.findByYear(year));
+        }
+
+        return map;
     }
 }

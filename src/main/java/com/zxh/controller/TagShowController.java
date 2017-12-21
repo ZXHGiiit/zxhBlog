@@ -6,6 +6,8 @@ import com.zxh.service.RedisService;
 import com.zxh.service.TagService;
 import com.zxh.vo.BlogQuery;
 import com.zxh.vo.TagVo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,8 +46,6 @@ public class TagShowController {
         //获取所有标签
 
         List<TagVo> tagVos = tagService.listTagTop(10000);
-
-
         if(id == -1) {
             id= tagVos.get(0).getId();
         }

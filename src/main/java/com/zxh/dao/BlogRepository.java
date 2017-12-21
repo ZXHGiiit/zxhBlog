@@ -32,6 +32,12 @@ public interface BlogRepository extends JpaRepository<Blog, Long>, JpaSpecificat
     @Query("update Blog t set t.views = t.views+1 where t.id = ?1")
     int updateViews(Long id);
 
+    @Query("select t from Blog t where function('date_format', t.updateTime, '%Y') = ?1")
+    List<Blog> findByYear(String year);
+
+    @Query("select function('date_format', t.updateTime, '%Y') as year from Blog t " +
+            "group by function('date_format', t.updateTime, '%Y') order by year desc ")
+    List<String> findGroupYear();
 }
 
 
