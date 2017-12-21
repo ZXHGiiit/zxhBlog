@@ -32,6 +32,7 @@ public class PageFooterInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse httpServletResponse, Object o) throws Exception {
+        logger.info("PageFooterInterceptor.preHandle.begin=========>");
         if(request.getSession().getAttribute("blogsTop") == null) {
             logger.info("PageFooterInterceptor.preHandle.session 已经过期，重新设置。。。");
             BeanFactory factory = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getServletContext());
