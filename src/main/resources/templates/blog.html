@@ -52,7 +52,7 @@
 
         <!--标签-->
         <div class="m-padded-lr-responsive">
-          <div class="ui basic teal left pointing label">方法论</div>
+          <div class="ui basic teal left pointing label" th:each="tag : ${blog.tags}" th:text="${tag.name}">方法论</div>
         </div>
 
         <!--赞赏-->
