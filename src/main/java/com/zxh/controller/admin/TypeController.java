@@ -41,7 +41,7 @@ public class TypeController {
     public String showInputPage(Model model) {
         //修改页需要tag作为参数，防止空指针异常，这里传入一个空的tag对象
         model.addAttribute("type", new Type());
-        return "/admin/types-input";
+        return "admin/types-input";
     }
 
     /**
@@ -57,7 +57,7 @@ public class TypeController {
             logger.error("TypeController.showEditPage.Type is not exist. id: {}", id);
         }
         model.addAttribute("type", typeService.getType(id));
-        return "/admin/types-input";
+        return "admin/types-input";
     }
 
     /**
@@ -72,7 +72,7 @@ public class TypeController {
         Page<Type> types = typeService.listType(pageable);
         logger.info("TypeController.types.info: {}", types);
         model.addAttribute("page", types);
-        return "/admin/types";
+        return "admin/types";
     }
 
     /**

@@ -50,7 +50,7 @@ public class BlogController {
         //将Blog Type装载到Model中去，用来实现下拉框查询
         model.addAttribute("types", typeService.listType());
         model.addAttribute("page", blogService.listBlog(pageable, blogQuery));
-        return "/admin/blogs";
+        return "admin/blogs";
     }
 
 
@@ -66,7 +66,7 @@ public class BlogController {
                          Pageable pageable, BlogQuery blogQuery, Model model) {
         model.addAttribute("page", blogService.listBlog(pageable, blogQuery));
         //返回html局部片段，实现局部渲染
-        return "/admin/blogs :: blogList";
+        return "admin/blogs :: blogList";
     }
 
     /**
@@ -78,7 +78,7 @@ public class BlogController {
     public String showInputPage(Model model) {
         model.addAttribute("blog", new Blog());
         setTypeAndTag(model);
-        return "/admin/blogs-input";
+        return "admin/blogs-input";
     }
 
     private void setTypeAndTag(Model model) {
@@ -95,10 +95,10 @@ public class BlogController {
     public String showEditPage(@PathVariable Long id, Model model) {
         Blog blog = blogService.getBlog(id);
         blog.init();
-        logger.info("BlogController.showEditPage.info: {}", blog.toString());
+        //logger.info("BlogController.showEditPage.info: {}", blog.toString());
         model.addAttribute("blog", blog);
         setTypeAndTag(model);
-        return "/admin/blogs-input";
+        return "admin/blogs-input";
     }
 
 

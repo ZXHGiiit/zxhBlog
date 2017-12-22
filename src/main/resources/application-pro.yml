@@ -37,8 +37,8 @@ logging:
   level:
     root: info
     com.zxh: info
-  file: log/blog-dev.log
+  file: log/blog-pro.log
 
 server:
-  port: 8080
+  port: 80
 

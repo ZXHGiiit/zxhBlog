@@ -45,7 +45,7 @@ public class TagController {
         Page<Tag> tags = tagService.listTag(pageable);
         logger.info("TagController.tags.info: {}", tags);
         model.addAttribute("page", tags);
-        return "/admin/tags";
+        return "admin/tags";
     }
 
 
@@ -57,7 +57,7 @@ public class TagController {
     @GetMapping("/tags/input")
     public String showInputPage(Model model) {
         model.addAttribute("tag", new Tag());
-        return "/admin/tags-input";
+        return "admin/tags-input";
     }
 
     /**
@@ -72,7 +72,7 @@ public class TagController {
             logger.error("TagController.showEditPage.ERROR.Tag is not exist. id: {}", id);
         }
         model.addAttribute("tag", tag);
-        return "/admin/tags-input";
+        return "admin/tags-input";
     }
 
     /**
