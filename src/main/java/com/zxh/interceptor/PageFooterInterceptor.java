@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -33,7 +34,8 @@ public class PageFooterInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse httpServletResponse, Object o) throws Exception {
         logger.info("PageFooterInterceptor.preHandle.begin=========>");
-        if(request.getSession().getAttribute("blogsTop") == null) {
+        HttpSession session = request.getSession();
+        if(session.getAttribute("blogsTop") == null) {
             logger.info("PageFooterInterceptor.preHandle.session 已经过期，重新设置。。。");
             BeanFactory factory = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getServletContext());
             if(blogService == null) {
@@ -41,7 +43,8 @@ public class PageFooterInterceptor implements HandlerInterceptor {
                 blogService = (BlogService) factory.getBean("blogService");
             }
             List<Blog> blogs = blogService.listBlogTop(3);
-            request.getSession().setAttribute("blogsTop", blogs);
+            session.setAttribute("blogsTop", blogs);
+            session.setMaxInactiveInterval(120*60);//设置session两小时过期
         }
         return true;
     }

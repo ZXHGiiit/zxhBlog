@@ -38,6 +38,7 @@ public class LoginController {
         if(user != null) {
             logger.info("UserController.login.userInfo{}", user.toString());
             session.setAttribute("user", user);
+            session.setMaxInactiveInterval(120*60);//设置session过期时间，写博客可能会花很长时间，以秒为单位，时长两小时
             return "admin/index";
         } else {
             attributes.addFlashAttribute("message", "用户名或密码错误");
