@@ -65,7 +65,7 @@ public class TagController {
      * @param model
      * @return
      */
-    @GetMapping("/admin/{id}/input")
+    @GetMapping("/tags/{id}/input")
     public String showEditPage(@PathVariable Long id, Model model) {
         Tag tag = tagService.getTag(id);
         if(tag == null) {

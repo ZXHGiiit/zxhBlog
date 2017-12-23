@@ -111,7 +111,7 @@ public class BlogController {
      */
     @PostMapping("/blogs")
     public String post(Blog blog, RedirectAttributes attributes, HttpSession session) {
-        logger.info("BlogController.post.info: {}", blog);
+        //logger.info("BlogController.post.info: {}", blog);
         User user = (User) session.getAttribute("user");
         if(user == null) {
             attributes.addFlashAttribute("message", "操作失败，未知用户");

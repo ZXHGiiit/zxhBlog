@@ -90,6 +90,9 @@ public class BlogServiceImpl implements BlogService {
     @Transactional
     @Override
     public Blog saveBlog(Blog blog) {
+        if(blog.getFlag() == null || "".equals(blog.getFlag())) {
+            blog.setFlag("原创");
+        }
         if(blog.getId() == null) {
             //可以在数据库设置默认值和触发器
             blog.setCreateTime(new Date());
