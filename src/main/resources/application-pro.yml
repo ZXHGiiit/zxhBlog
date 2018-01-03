@@ -42,3 +42,12 @@ logging:
 server:
   port: 80
 
+blog:
+  top:
+    size: 3
+  type:
+    size: 6
+  tag:
+    size: 8
+
+

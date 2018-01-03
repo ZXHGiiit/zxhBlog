@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -93,6 +94,8 @@ public class TagServiceImpl implements TagService {
                 //logger.info("TagServiceImpl.listTagTop.redis has the key-value:{}", tagsJson);
                 List<TagVo> tagVos = JacksonUtils.jsonToList(tagsJson, TagVo.class);
                 redisService.expire("blog", "tagsTop", 100);
+                //当只查询前6个tag，redis可能存储了所有的tag，需要剪切
+                tagVos = tagVos.subList(0, size);
                 return tagVos;
             }
         } catch (Exception e) {
@@ -105,6 +108,15 @@ public class TagServiceImpl implements TagService {
         List<TagVo> tagVos = toVo(tags);
         //将结果放入redis缓存
         redisService.set("blog", "tagsTop", JacksonUtils.toJson(tagVos), 100);
+        return tagVos;
+    }
+
+    @Override
+    public List<TagVo> listTagTop() {
+        Sort sort = new Sort(Sort.Direction.DESC, "blogs.size");//以blogs.size作为排序依据
+        Pageable pageable= new PageRequest(0, 1000, sort);
+        List<Tag> tags = tagRepository.findTop(pageable);
+        List<TagVo> tagVos = toVo(tags);
         return tagVos;
     }
 
@@ -133,6 +145,15 @@ public class TagServiceImpl implements TagService {
             }
         }
         return tagVos;
+    }
+
+
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<>();
+        list.add("a");
+        list.add("b");
+        list.add("c");
+        System.out.println(list.subList(0,1));
     }
 
 }

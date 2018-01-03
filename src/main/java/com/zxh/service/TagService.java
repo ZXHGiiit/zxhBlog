@@ -33,6 +33,16 @@ public interface TagService {
      */
     List<Tag> listTag(String ids);
 
+    /**
+     * 使用redis
+     * @param size
+     * @return
+     */
     List<TagVo> listTagTop(Integer size);
 
+    /**
+     * 获取所有tag，与listTagTop方法分离，不使用redis
+     * @return
+     */
+    List<TagVo> listTagTop();
 }

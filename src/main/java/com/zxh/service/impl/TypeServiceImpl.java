@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +33,6 @@ public class TypeServiceImpl implements TypeService {
     private RedisService redisService;
     @Autowired
     private TypeRepository typeRepository;
-
     @Transactional
     @Override
     public Type saveType(Type type) {
@@ -84,6 +84,9 @@ public class TypeServiceImpl implements TypeService {
             String typesJson = redisService.get("blog", "typesTop");
             if(typesJson != null) {
                 List<TypeVo> typeVos = JacksonUtils.jsonToList(typesJson, TypeVo.class);
+                redisService.expire("blog", "typesTop", 100);
+                //使结果不大于size
+                typeVos = typeVos.subList(0, size);
                 return typeVos;
             }
         } catch (Exception e) {
