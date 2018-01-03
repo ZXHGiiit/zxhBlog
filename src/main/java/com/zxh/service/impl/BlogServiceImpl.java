@@ -8,9 +8,11 @@ import com.zxh.model.ViewLog;
 import com.zxh.service.BlogService;
 import com.zxh.service.RedisService;
 import com.zxh.service.ViewLogService;
+import com.zxh.util.JacksonUtils;
 import com.zxh.util.MarkdownUtils;
 import com.zxh.util.MyBeanUtils;
 import com.zxh.vo.BlogQuery;
+import com.zxh.vo.BlogVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -22,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.*;
 import javax.servlet.http.HttpServletRequest;
@@ -137,17 +140,40 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public List<Blog> listReCommendBlogTop(Integer size) {
+    public List<BlogVo> listReCommendBlogTop(Integer size) {
+        try {
+            String blogVos = redisService.get("blog", "recommendBlogTop");
+            redisService.expire("blog", "recommendBlogTop", 100);
+            if(!StringUtils.isEmpty(blogVos)) {
+                return JacksonUtils.jsonToList(blogVos, BlogVo.class);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Sort sort = new Sort(Sort.Direction.DESC, "updateTime");
         Pageable pageable = new PageRequest(0, size, sort);
-        return blogRepository.findReCommendTop(pageable);
+        List<Blog> blogTop = blogRepository.findReCommendTop(pageable);
+        List<BlogVo> blogVos = toVo(blogTop);
+        redisService.set("blog", "recommendBlogTop", blogVos, 100);
+        return blogVos;
     }
 
     @Override
-    public List<Blog> listBlogTop(Integer size) {
+    public List<BlogVo> listBlogTop(Integer size) {
+        try {
+            String blogVos = redisService.get("blog", "blogTop");
+            if(!StringUtils.isEmpty(blogVos)) {
+                return JacksonUtils.jsonToList(blogVos, BlogVo.class);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Sort sort = new Sort(Sort.Direction.DESC, "updateTime");
         Pageable pageable = new PageRequest(0, size, sort);
-        return blogRepository.findTop(pageable);
+        List<Blog> blogTop = blogRepository.findTop(pageable);
+        List<BlogVo> blogVos = toVo(blogTop);
+        redisService.set("blog", "blogTop", blogVos);//不设置过期，有博客更新时，同时更新redis缓存
+        return blogVos;
     }
 
     @Override
@@ -176,7 +202,7 @@ public class BlogServiceImpl implements BlogService {
         Boolean isView = redisService.get(ip, String.valueOf(id), Boolean.class);
         if(isView == null) {
             //将该IP的访问记录临时放入redis中
-            redisService.set(ip, String.valueOf(id), true);
+            redisService.set(ip, String.valueOf(id), true, 100);
             //从数据库中查询出该ip的访问记录
             List<Long> blogIds = viewLogService.listBlogIdByIp(ip);
             if(!blogIds.contains(id)) {
@@ -204,5 +230,18 @@ public class BlogServiceImpl implements BlogService {
         }
 
         return map;
+    }
+
+    private List<BlogVo> toVo(List<Blog> blogs) {
+        List<BlogVo> blogVos = new ArrayList<>();
+        if(blogs != null) {
+            for(Blog blog : blogs) {
+                BlogVo vo = new BlogVo();
+                vo.setId(blog.getId());
+                vo.setTitle(blog.getTitle());
+                blogVos.add(vo);
+            }
+        }
+        return blogVos;
     }
 }

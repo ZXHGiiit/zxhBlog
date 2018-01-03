@@ -78,4 +78,16 @@ public class IndexController {
         return "blog";
     }
 
+    /**
+     * 博客底部最新3篇（不同于最新推荐）
+     * @param model
+     * @return
+     */
+    @GetMapping("/footer/newblog")
+    public String newblogs(Model model) {
+        model.addAttribute("newblogs", blogService.listBlogTop(3));
+        return "_fragments :: newblogList";
+    }
+
+
 }

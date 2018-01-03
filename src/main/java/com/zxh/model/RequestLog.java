@@ -52,4 +52,13 @@ public class RequestLog {
         this.args = args;
     }
 
+    @Override
+    public String toString() {
+        return "RequestLog{" +
+                "url='" + url + '\'' +
+                ", ip='" + ip + '\'' +
+                ", classMethod='" + classMethod + '\'' +
+                ", args=" + Arrays.toString(args) +
+                '}';
+    }
 }

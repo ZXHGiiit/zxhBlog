@@ -2,6 +2,7 @@ package com.zxh.service;
 
 import com.zxh.model.Blog;
 import com.zxh.vo.BlogQuery;
+import com.zxh.vo.BlogVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -39,14 +40,14 @@ public interface BlogService {
      * @param size
      * @return
      */
-    List<Blog> listReCommendBlogTop(Integer size);
+    List<BlogVo> listReCommendBlogTop(Integer size);
 
     /**
      * 最新的博客
      * @param size
      * @return
      */
-    List<Blog> listBlogTop(Integer size);
+    List<BlogVo> listBlogTop(Integer size);
 
 
     /**

@@ -3,6 +3,7 @@ package com.zxh.interceptor;
 import com.zxh.model.Blog;
 import com.zxh.service.BlogService;
 import com.zxh.service.RedisService;
+import com.zxh.vo.BlogVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -42,7 +43,7 @@ public class PageFooterInterceptor implements HandlerInterceptor {
                 logger.warn("PageController.preHandle.blogService 无法通过@Autowired注入");
                 blogService = (BlogService) factory.getBean("blogService");
             }
-            List<Blog> blogs = blogService.listBlogTop(3);
+            List<BlogVo> blogs = blogService.listBlogTop(3);
             session.setAttribute("blogsTop", blogs);
             session.setMaxInactiveInterval(120*60);//设置session两小时过期
         }

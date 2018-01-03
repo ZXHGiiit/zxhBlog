@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,19 +86,25 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<TagVo> listTagTop(Integer size) {
-        String tagsJson = redisService.get("blog", "tagsTop");
-        logger.info("TagServiceImpl.listTagTop.tagsJson:{}", tagsJson);
-        if(tagsJson != null) {
-            logger.info("TagServiceImpl.listTagTop.redis has the key-value:{}", tagsJson);
-            List<TagVo> tagVos = JacksonUtils.jsonToList(tagsJson, TagVo.class);
-            return tagVos;
+        try {
+            String tagsJson = redisService.get("blog", "tagsTop");
+            //logger.info("TagServiceImpl.listTagTop.tagsJson:{}", tagsJson);
+            if(!StringUtils.isEmpty(tagsJson)) {
+                //logger.info("TagServiceImpl.listTagTop.redis has the key-value:{}", tagsJson);
+                List<TagVo> tagVos = JacksonUtils.jsonToList(tagsJson, TagVo.class);
+                redisService.expire("blog", "tagsTop", 100);
+                return tagVos;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
         Sort sort = new Sort(Sort.Direction.DESC, "blogs.size");//以blogs.size作为排序依据
         Pageable pageable= new PageRequest(0, size, sort);
         List<Tag> tags = tagRepository.findTop(pageable);
         List<TagVo> tagVos = toVo(tags);
         //将结果放入redis缓存
-        redisService.set("blog", "tagsTop", JacksonUtils.toJson(tagVos));
+        redisService.set("blog", "tagsTop", JacksonUtils.toJson(tagVos), 100);
         return tagVos;
     }
 

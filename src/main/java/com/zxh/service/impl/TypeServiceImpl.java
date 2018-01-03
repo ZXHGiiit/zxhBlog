@@ -80,17 +80,21 @@ public class TypeServiceImpl implements TypeService {
 
     @Override
     public List<TypeVo> listTypeTop(Integer size) {
-        String typesJson = redisService.get("blog", "typesTop");
-        if(typesJson != null) {
-            List<TypeVo> typeVos = JacksonUtils.jsonToList(typesJson, TypeVo.class);
-            return typeVos;
+        try {
+            String typesJson = redisService.get("blog", "typesTop");
+            if(typesJson != null) {
+                List<TypeVo> typeVos = JacksonUtils.jsonToList(typesJson, TypeVo.class);
+                return typeVos;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         Sort sort = new Sort(Sort.Direction.DESC, "blogs.size");
         Pageable pageable = new PageRequest(0, size, sort);
         List<Type> types = typeRepository.findTop(pageable);
         List<TypeVo> typeVos= toVo(types);
         //将结果放入redis缓存
-        redisService.set("blog", "typesTop", JacksonUtils.toJson(typeVos));
+        redisService.set("blog", "typesTop", JacksonUtils.toJson(typeVos),100);
         return typeVos;
     }
 
