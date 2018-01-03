@@ -39,10 +39,4 @@ public interface TagService {
      * @return
      */
     List<TagVo> listTagTop(Integer size);
-
-    /**
-     * 获取所有tag，与listTagTop方法分离，不使用redis
-     * @return
-     */
-    List<TagVo> listTagTop();
 }

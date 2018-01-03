@@ -33,6 +33,11 @@ public class TypeServiceImpl implements TypeService {
     private RedisService redisService;
     @Autowired
     private TypeRepository typeRepository;
+    @Value("${redis.area}")
+    private String AREA;
+    @Value("${redis.types.top.key}")
+    private String TYPES_TOP_KEY;
+
     @Transactional
     @Override
     public Type saveType(Type type) {
@@ -42,6 +47,7 @@ public class TypeServiceImpl implements TypeService {
     @Transactional
     @Override
     public void deleteType(Long id) {
+        redisService.del(AREA, TYPES_TOP_KEY);
         typeRepository.delete(id);
     }
 
@@ -64,6 +70,7 @@ public class TypeServiceImpl implements TypeService {
     @Transactional
     @Override
     public Type updateType(Long id, Type type) {
+        redisService.del(AREA, TYPES_TOP_KEY);
         Type t = typeRepository.findOne(id);
         if(t == null){
             logger.error("TypeServiceImpl.updateType. id is not exist. id = {}", id);
@@ -81,12 +88,15 @@ public class TypeServiceImpl implements TypeService {
     @Override
     public List<TypeVo> listTypeTop(Integer size) {
         try {
-            String typesJson = redisService.get("blog", "typesTop");
+            String typesJson = redisService.get(AREA, TYPES_TOP_KEY);
             if(typesJson != null) {
                 List<TypeVo> typeVos = JacksonUtils.jsonToList(typesJson, TypeVo.class);
-                redisService.expire("blog", "typesTop", 100);
                 //使结果不大于size
-                typeVos = typeVos.subList(0, size);
+                try {
+                    typeVos = typeVos.subList(0, size);
+                } catch (Exception e) {
+                    logger.warn("TypeServiceImpl.listTypeTop.subList.ERROR.IndexOutOfBoundsException");
+                }
                 return typeVos;
             }
         } catch (Exception e) {
@@ -97,7 +107,7 @@ public class TypeServiceImpl implements TypeService {
         List<Type> types = typeRepository.findTop(pageable);
         List<TypeVo> typeVos= toVo(types);
         //将结果放入redis缓存
-        redisService.set("blog", "typesTop", JacksonUtils.toJson(typeVos),100);
+        redisService.set(AREA, TYPES_TOP_KEY, JacksonUtils.toJson(typeVos));
         return typeVos;
     }
 

@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -46,6 +47,13 @@ public class BlogServiceImpl implements BlogService {
     private BlogRepository blogRepository;
     @Autowired
     private ViewLogService viewLogService;
+
+    @Value("${redis.area}")
+    private String AREA;
+    @Value("${redis.recommendblogs.top.key}")
+    private String RECOMMEND_BLOGS_TOP_KEY;
+    @Value("${redis.blogs.top.key}")
+    private String BLOGS_TOP_KEY;
 
     @Override
     public Blog getBlog(Long id) {
@@ -93,6 +101,8 @@ public class BlogServiceImpl implements BlogService {
     @Transactional
     @Override
     public Blog saveBlog(Blog blog) {
+        redisService.del(AREA, BLOGS_TOP_KEY);
+        redisService.del(AREA, RECOMMEND_BLOGS_TOP_KEY);
         if(blog.getFlag() == null || "".equals(blog.getFlag())) {
             blog.setFlag("原创");
         }
@@ -112,6 +122,8 @@ public class BlogServiceImpl implements BlogService {
     @Transactional
     @Override
     public Blog updateBlog(Long id, Blog blog) {
+        redisService.del(AREA, BLOGS_TOP_KEY);
+        redisService.del(AREA, RECOMMEND_BLOGS_TOP_KEY);
         Blog blog1 = blogRepository.findOne(id);
         if(blog1 == null) {
             logger.error("BlogServiceImpl.updateBlog.ERROR.不存在此id的blog, id: {}", id);
@@ -126,6 +138,8 @@ public class BlogServiceImpl implements BlogService {
     @Transactional
     @Override
     public void deleteBlog(Long id) {
+        redisService.del(AREA, BLOGS_TOP_KEY);
+        redisService.del(AREA, RECOMMEND_BLOGS_TOP_KEY);
         Blog blog = blogRepository.findOne(id);
         if(blog == null) {
             logger.error("BlogServiceImpl.deleteBlog.ERROR.blog is not exist. id: {}", id);
@@ -142,8 +156,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public List<BlogVo> listReCommendBlogTop(Integer size) {
         try {
-            String blogVos = redisService.get("blog", "recommendBlogTop");
-            redisService.expire("blog", "recommendBlogTop", 100);
+            String blogVos = redisService.get(AREA, RECOMMEND_BLOGS_TOP_KEY);
             if(!StringUtils.isEmpty(blogVos)) {
                 return JacksonUtils.jsonToList(blogVos, BlogVo.class);
             }
@@ -154,14 +167,14 @@ public class BlogServiceImpl implements BlogService {
         Pageable pageable = new PageRequest(0, size, sort);
         List<Blog> blogTop = blogRepository.findReCommendTop(pageable);
         List<BlogVo> blogVos = toVo(blogTop);
-        redisService.set("blog", "recommendBlogTop", blogVos, 100);
+        redisService.set(AREA, RECOMMEND_BLOGS_TOP_KEY, blogVos);
         return blogVos;
     }
 
     @Override
     public List<BlogVo> listBlogTop(Integer size) {
         try {
-            String blogVos = redisService.get("blog", "blogTop");
+            String blogVos = redisService.get(AREA, BLOGS_TOP_KEY);
             if(!StringUtils.isEmpty(blogVos)) {
                 return JacksonUtils.jsonToList(blogVos, BlogVo.class);
             }
@@ -172,7 +185,7 @@ public class BlogServiceImpl implements BlogService {
         Pageable pageable = new PageRequest(0, size, sort);
         List<Blog> blogTop = blogRepository.findTop(pageable);
         List<BlogVo> blogVos = toVo(blogTop);
-        redisService.set("blog", "blogTop", blogVos);//不设置过期，有博客更新时，同时更新redis缓存
+        redisService.set(AREA, BLOGS_TOP_KEY, blogVos);//不设置过期，有博客更新时，同时更新redis缓存
         return blogVos;
     }
 

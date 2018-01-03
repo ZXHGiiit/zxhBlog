@@ -34,22 +34,29 @@ public class TagServiceImpl implements TagService {
     private RedisService redisService;
     @Autowired
     private TagRepository tagRepository;
+    @Value("${redis.area}")
+    private String AREA;
+    @Value("${redis.tags.top.key}")
+    private String TAGS_TOP_KEY;
 
     @Transactional
     @Override
     public Tag saveTag(Tag tag) {
+        redisService.del(AREA, TAGS_TOP_KEY);//删除缓存
         return tagRepository.save(tag);
     }
 
     @Transactional
     @Override
     public void deleteTag(Long id) {
+        redisService.del(AREA, TAGS_TOP_KEY);//删除缓存
         tagRepository.delete(id);
     }
 
     @Transactional
     @Override
     public Tag updateTag(Long id, Tag tag) {
+        redisService.del(AREA, TAGS_TOP_KEY);//删除缓存
         Tag tag1 = tagRepository.findOne(id);
         if(tag1 == null) {
             logger.error("TagServiceImpl.updateTag.ERROR 不存在该标签. id:{}", id);
@@ -88,14 +95,18 @@ public class TagServiceImpl implements TagService {
     @Override
     public List<TagVo> listTagTop(Integer size) {
         try {
-            String tagsJson = redisService.get("blog", "tagsTop");
+            String tagsJson = redisService.get(AREA, TAGS_TOP_KEY);
             //logger.info("TagServiceImpl.listTagTop.tagsJson:{}", tagsJson);
             if(!StringUtils.isEmpty(tagsJson)) {
                 //logger.info("TagServiceImpl.listTagTop.redis has the key-value:{}", tagsJson);
                 List<TagVo> tagVos = JacksonUtils.jsonToList(tagsJson, TagVo.class);
-                redisService.expire("blog", "tagsTop", 100);
                 //当只查询前6个tag，redis可能存储了所有的tag，需要剪切
-                tagVos = tagVos.subList(0, size);
+                try {
+                    tagVos = tagVos.subList(0, size);
+                } catch (Exception e) {
+                    logger.warn("TagServiceImpl.listTagTop.subList.IndexOutOfBoundsException");
+                }
+
                 return tagVos;
             }
         } catch (Exception e) {
@@ -107,19 +118,9 @@ public class TagServiceImpl implements TagService {
         List<Tag> tags = tagRepository.findTop(pageable);
         List<TagVo> tagVos = toVo(tags);
         //将结果放入redis缓存
-        redisService.set("blog", "tagsTop", JacksonUtils.toJson(tagVos), 100);
+        redisService.set(AREA, TAGS_TOP_KEY, JacksonUtils.toJson(tagVos));
         return tagVos;
     }
-
-    @Override
-    public List<TagVo> listTagTop() {
-        Sort sort = new Sort(Sort.Direction.DESC, "blogs.size");//以blogs.size作为排序依据
-        Pageable pageable= new PageRequest(0, 1000, sort);
-        List<Tag> tags = tagRepository.findTop(pageable);
-        List<TagVo> tagVos = toVo(tags);
-        return tagVos;
-    }
-
 
     private List<Long> convertToList(String ids) {
         List<Long> list = new ArrayList<>();
@@ -153,7 +154,12 @@ public class TagServiceImpl implements TagService {
         list.add("a");
         list.add("b");
         list.add("c");
-        System.out.println(list.subList(0,1));
+        try {
+            list = list.subList(0,2);
+        } catch (Exception e) {
+            System.out.println("出错了");
+        }
+        System.out.println(list);
     }
 
 }

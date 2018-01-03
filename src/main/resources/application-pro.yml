@@ -42,12 +42,19 @@ logging:
 server:
   port: 80
 
-blog:
-  top:
-    size: 3
-  type:
-    size: 6
-  tag:
-    size: 8
+redis:
+  area: blog
+  tags:
+    top:
+      key: tagsTop
+  types:
+    top:
+      key: typesTop
+  blogs:
+    top:
+      key: blogsTop
+  recommendblogs:
+    top:
+      key: recommendblogsTop
 
 
