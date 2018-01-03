@@ -110,19 +110,4 @@ public class Comment {
     public void setAdminComment(boolean adminComment) {
         this.adminComment = adminComment;
     }
-
-    @Override
-    public String toString() {
-        return "Comment{" +
-                "id=" + id +
-                ", nickName='" + nickName + '\'' +
-                ", email='" + email + '\'' +
-                ", content='" + content + '\'' +
-                ", avatar='" + avatar + '\'' +
-                ", createTime=" + createTime +
-                ", blog=" + blog +
-                ", replyComments=" + replyComments +
-                ", parentComment=" + parentComment +
-                '}';
-    }
 }

@@ -48,12 +48,4 @@ public class Type {
         this.blogs = blogs;
     }
 
-    @Override
-    public String toString() {
-        return "Type{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", blogs=" + blogs +
-                '}';
-    }
 }

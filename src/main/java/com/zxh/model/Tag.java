@@ -48,12 +48,4 @@ public class Tag {
         this.blogs = blogs;
     }
 
-    @Override
-    public String toString() {
-        return "Tag{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", blogs=" + blogs +
-                '}';
-    }
 }
