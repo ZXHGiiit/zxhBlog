@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 @SpringBootApplication()
 public class BlogApplication {
 
+
 	public static void main(String[] args) {
 		SpringApplication.run(BlogApplication.class, args);
 	}
